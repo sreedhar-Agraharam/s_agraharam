@@ -75,7 +75,7 @@ SET(RUNTIMEDIR "${SYSSTATEDIR}/run/ganesha" CACHE PATH "Runtime directory (for t
 # Extra version is for naming development/RC.  It is blank in stable branches
 # so it can be available to end-users to name local variants/versions
 # If used, it is always of the form "-whateveryouwant"
-set(GANESHA_EXTRA_VERSION -dev.18)
+set(GANESHA_EXTRA_VERSION -dev.17)
 
 set(GANESHA_VERSION ${GANESHA_MAJOR_VERSION}${GANESHA_MINOR_VERSION}${GANESHA_EXTRA_VERSION})
 set(GANESHA_BASE_VERSION ${GANESHA_MAJOR_VERSION}${GANESHA_MINOR_VERSION})
@@ -343,6 +343,7 @@ option(_VALGRIND_MEMCHECK "Initialize buffers passed to GPFS ioctl that valgrind
 option(ENABLE_LOCKTRACE "Enable lock trace" OFF)
 goption(PROXYV4_HANDLE_MAPPING "enable NFSv3 handle mapping for PROXY_V4 FSAL" OFF)
 option(DEBUG_MDCACHE "Add various asserts to mdcache" OFF)
+option(ENABLE_QOS "QOS feature enablement" ON)
 
 # Debug symbols (-g) build flag
 option(DEBUG_SYMS "include debug symbols to binaries (-g option)" OFF)
@@ -1409,6 +1410,7 @@ message(STATUS "_VALGRIND_MEMCHECK = ${_VALGRIND_MEMCHECK}")
 message(STATUS "ENABLE_LOCKTRACE = ${ENABLE_LOCKTRACE}")
 message(STATUS "PROXYV4_HANDLE_MAPPING = ${PROXYV4_HANDLE_MAPPING}")
 message(STATUS "DEBUG_MDCACHE = ${DEBUG_MDCACHE}")
+message(STATUS "ENABLE_QOS = ${ENABLE_QOS}")
 message(STATUS "DEBUG_SYMS = ${DEBUG_SYMS}")
 message(STATUS "COVERAGE = ${COVERAGE}")
 message(STATUS "ENFORCE_GCC = ${ENFORCE_GCC}")
