@@ -37,6 +37,9 @@ typedef struct posix_acl_entry posix_acl_entry;
 
 struct posix_acl {
 	nfs3_uint32 count;
+#ifdef __cplusplus
+	posix_acl_entry *entries;
+#endif
 	posix_acl_entry entries[0];
 };
 typedef struct posix_acl posix_acl;

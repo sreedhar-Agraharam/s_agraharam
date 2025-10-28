@@ -822,10 +822,6 @@ struct sec_label4 {
 
 typedef struct sec_label4 fattr4_sec_label;
 
-/* NFSv4.2 Delegation Timestamp Extensions (RFC 9754) */
-typedef nfstime4 fattr4_time_deleg_access;
-typedef nfstime4 fattr4_time_deleg_modify;
-
 /*
  * REQUIRED Attributes
  */
@@ -920,16 +916,12 @@ typedef nfstime4 fattr4_time_deleg_modify;
 #define FATTR4_CHANGE_ATTR_TYPE 79
 #define FATTR4_SEC_LABEL 80
 
+/* NFSv4.3 */
 #define FATTR4_XATTR_SUPPORT 82
 #define FATTR4_OFFLINE 83
 
-/* NFSv4.2 Delegation Timestamp Extensions (RFC 9754) */
-#define FATTR4_TIME_DELEG_ACCESS 84
-#define FATTR4_TIME_DELEG_MODIFY 85
-#define FATTR4_OPEN_ARGUMENTS 86
-
 /* Largest defined attribute index */
-#define FATTR4_MAX_ATTR_INDEX FATTR4_OPEN_ARGUMENTS
+#define FATTR4_MAX_ATTR_INDEX FATTR4_XATTR_SUPPORT
 
 /* Restricted attrs on an absent FS */
 #define FATTR4_RESTRICTED_ATTRS                                         \
@@ -1554,15 +1546,12 @@ typedef struct nfs_space_limit4 nfs_space_limit4;
 #define OPEN4_SHARE_ACCESS_WANT_CANCEL 0x0500
 #define OPEN4_SHARE_ACCESS_WANT_SIGNAL_DELEG_WHEN_RESRC_AVAIL 0x10000
 #define OPEN4_SHARE_ACCESS_WANT_PUSH_DELEG_WHEN_UNCONTENDED 0x20000
-#define OPEN4_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS 0x100000
 
 enum open_delegation_type4 {
 	OPEN_DELEGATE_NONE = 0,
 	OPEN_DELEGATE_READ = 1,
 	OPEN_DELEGATE_WRITE = 2,
 	OPEN_DELEGATE_NONE_EXT = 3,
-	OPEN_DELEGATE_READ_ATTRS_DELEG = 4,
-	OPEN_DELEGATE_WRITE_ATTRS_DELEG = 5,
 };
 typedef enum open_delegation_type4 open_delegation_type4;
 
@@ -1576,17 +1565,6 @@ enum open_claim_type4 {
 	CLAIM_DELEG_PREV_FH = 6,
 };
 typedef enum open_claim_type4 open_claim_type4;
-
-/* NFSv4.2 Delegation Timestamp Extensions (RFC 9754) */
-struct open_arguments4 {
-	struct bitmap4 oa_share_access;
-	struct bitmap4 oa_share_deny;
-	struct bitmap4 oa_share_access_want;
-	struct bitmap4 oa_open_claim;
-	struct bitmap4 oa_create_mode;
-};
-typedef struct open_arguments4 open_arguments4;
-typedef struct open_arguments4 fattr4_open_arguments;
 
 struct open_claim_delegate_cur4 {
 	stateid4 delegate_stateid;
@@ -6161,22 +6139,6 @@ static inline bool xdr_open_claim4(XDR *xdrs, open_claim4 *objp)
 	return true;
 }
 
-/* NFSv4.2 Delegation Timestamp Extensions (RFC 9754) */
-static inline bool xdr_open_arguments4(XDR *xdrs, open_arguments4 *objp)
-{
-	if (!xdr_bitmap4(xdrs, &objp->oa_share_access))
-		return false;
-	if (!xdr_bitmap4(xdrs, &objp->oa_share_deny))
-		return false;
-	if (!xdr_bitmap4(xdrs, &objp->oa_share_access_want))
-		return false;
-	if (!xdr_bitmap4(xdrs, &objp->oa_open_claim))
-		return false;
-	if (!xdr_bitmap4(xdrs, &objp->oa_create_mode))
-		return false;
-	return true;
-}
-
 static inline bool xdr_OPEN4args(XDR *xdrs, OPEN4args *objp)
 {
 	if (!xdr_seqid4(xdrs, &objp->seqid))
@@ -6258,13 +6220,11 @@ static inline bool xdr_open_delegation4(XDR *xdrs, open_delegation4 *objp)
 	case OPEN_DELEGATE_NONE:
 		break;
 	case OPEN_DELEGATE_READ:
-	case OPEN_DELEGATE_READ_ATTRS_DELEG:
 		if (!xdr_open_read_delegation4(xdrs,
 					       &objp->open_delegation4_u.read))
 			return false;
 		break;
 	case OPEN_DELEGATE_WRITE:
-	case OPEN_DELEGATE_WRITE_ATTRS_DELEG:
 		if (!xdr_open_write_delegation4(
 			    xdrs, &objp->open_delegation4_u.write))
 			return false;
@@ -8168,9 +8128,7 @@ static inline bool xdr_nfs_opnum4(XDR *xdrs, nfs_opnum4 *objp)
 
 static inline bool xdr_nfs_argop4(XDR *xdrs, nfs_argop4 *objp)
 {
-	struct nfs_request_lookahead slhd = { .flags = 0,
-					      .read = 0,
-					      .write = 0 };
+	struct nfs_request_lookahead slhd = { 0, 0, 0 };
 	struct nfs_request_lookahead *lkhd =
 		xdrs->x_public ? (struct nfs_request_lookahead *)xdrs->x_public
 			       : &slhd;
