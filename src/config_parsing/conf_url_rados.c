@@ -125,6 +125,7 @@ static void cu_rados_url_early_init(void)
 
 extern struct config_error_type err_type;
 
+/*
 static void register_nfs_service(void)
 {
 	if (!rados_url_param.userid) {
@@ -144,7 +145,7 @@ static void register_nfs_service(void)
 			 __func__);
 	}
 }
-
+*/
 static int rados_url_client_setup(void)
 {
 	int ret;
@@ -174,7 +175,7 @@ static int rados_url_client_setup(void)
 		rados_shutdown(cluster);
 		return ret;
 	}
-	register_nfs_service();
+//	register_nfs_service();
 	init_url_regex();
 	initialized = true;
 	return 0;
