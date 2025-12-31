@@ -109,8 +109,8 @@ static struct nfs4_recovery_backend *recovery_backend =
 int32_t reclaim_completes; /* atomic */
 
 static void nfs4_recovery_load_clids(nfs_grace_start_t *gsp);
-static void nfs_release_nlm_state(char *release_ip);
-static void nfs_release_v4_clients(char *ip);
+static void nfs_release_nlm_state(char *release_ip, sockaddr_t *release_addr);
+static void nfs_release_v4_clients(char *ip, sockaddr_t *ip_saddr);
 
 clid_entry_t *nfs4_add_clid_entry(char *cl_name, bool reclaim_complete)
 {
@@ -118,6 +118,7 @@ clid_entry_t *nfs4_add_clid_entry(char *cl_name, bool reclaim_complete)
 
 	glist_init(&new_ent->cl_rfh_list);
 	(void)strlcpy(new_ent->cl_name, cl_name, sizeof(new_ent->cl_name));
+	LogDebug(COMPONENT_CLIENTID, "%s %d", cl_name, reclaim_complete);
 	new_ent->cl_reclaim_complete = reclaim_complete;
 	glist_add(&clid_list, &new_ent->cl_list);
 	++clid_count;
@@ -362,17 +363,30 @@ int nfs_start_grace(nfs_grace_start_t *gsp)
 		 * node is doing a take over.  read in the client ids from the
 		 * failing node.
 		 */
-		LogEvent(COMPONENT_STATE,
-			 "NFS Server recovery event %d nodeid %d ip %s",
-			 gsp->event, gsp->nodeid, gsp->ipaddr);
+		switch (gsp->event) {
+		case EVENT_RELEASE_IP:
+		case EVENT_TAKE_IP:
+			LogEvent(COMPONENT_STATE,
+				 "NFS Server recovery event %d ip %s",
+				 gsp->event, gsp->ipaddr);
+			break;
+		case EVENT_TAKE_NODEID:
+			LogEvent(COMPONENT_STATE,
+				 "NFS Server recovery event %d nodeid %d",
+				 gsp->event, gsp->nodeid);
+			break;
+		default:
+			LogEvent(COMPONENT_STATE,
+				 "NFS Server recovery event %d", gsp->event);
+		}
 
 		if (gsp->event == EVENT_CLEAR_BLOCKED)
 			cancel_all_nlm_blocked();
 		else {
-			nfs_release_nlm_state(gsp->ipaddr);
+			nfs_release_nlm_state(gsp->ipaddr, &gsp->sa);
 			if (gsp->event == EVENT_RELEASE_IP) {
 				PTHREAD_MUTEX_unlock(&grace_mutex);
-				nfs_release_v4_clients(gsp->ipaddr);
+				nfs_release_v4_clients(gsp->ipaddr, &gsp->sa);
 				return ret;
 			} else {
 				/*
@@ -1029,7 +1043,7 @@ static void nlm_release(state_nsm_client_t *nsm_cp)
 /**
  * @brief Release all NLM state
  */
-static void nfs_release_nlm_state(char *release_ip)
+static void nfs_release_nlm_state(char *release_ip, sockaddr_t *release_addr)
 {
 #ifdef _USE_NLM
 	hash_table_t *ht = ht_nlm_client;
@@ -1038,7 +1052,6 @@ static void nfs_release_nlm_state(char *release_ip)
 	struct rbt_head *head_rbt;
 	struct rbt_node *pn;
 	struct hash_data *pdata;
-	sockaddr_t release_addr;
 	int i;
 
 	if (!nfs_param.core_param.enable_NLM)
@@ -1047,8 +1060,6 @@ static void nfs_release_nlm_state(char *release_ip)
 	LogDebug(COMPONENT_STATE, "Release all NLM locks");
 
 	cancel_all_nlm_blocked();
-
-	ip_str_to_sockaddr(release_ip, &release_addr);
 
 	/* walk the client list and call state_nlm_notify */
 	for (i = 0; i < ht->parameter.index_size; i++) {
@@ -1063,8 +1074,8 @@ restart:
 			pdata = RBT_OPAQ(pn);
 			nlm_cp = (state_nlm_client_t *)pdata->val.addr;
 
-			if (cmp_sockaddr(&release_addr,
-					 &nlm_cp->slc_server_addr, true)) {
+			if (sockaddr_cmp(release_addr, &nlm_cp->slc_server_addr,
+					 true) == 0) {
 				nsm_cp = nlm_cp->slc_nsm_client;
 				inc_nsm_client_ref(nsm_cp);
 				PTHREAD_RWLOCK_unlock(
@@ -1079,9 +1090,9 @@ restart:
 #endif /* _USE_NLM */
 }
 
-static int ip_match(sockaddr_t *ip, nfs_client_id_t *cid)
+static bool ip_match(sockaddr_t *ip, nfs_client_id_t *cid)
 {
-	int rc;
+	bool rc;
 	sockaddr_t *saddr = &cid->cid_client_record->cr_server_addr;
 
 	if (isFullDebug(COMPONENT_STATE)) {
@@ -1093,7 +1104,7 @@ static int ip_match(sockaddr_t *ip, nfs_client_id_t *cid)
 		display_sockaddr_port(&db2, saddr, true);
 		LogDebug(COMPONENT_STATE, "Match %s with %s", addr1, addr2);
 	}
-	rc = cmp_sockaddr(ip, saddr, true);
+	rc = sockaddr_cmp(ip, saddr, true) == 0;
 	LogDebug(COMPONENT_STATE, "Match ret=%d", rc);
 	return rc;
 }
@@ -1103,7 +1114,7 @@ static int ip_match(sockaddr_t *ip, nfs_client_id_t *cid)
  * only search the confirmed clients, unconfirmed clients won't
  * have any state to release.
  */
-static void nfs_release_v4_clients(char *ip)
+static void nfs_release_v4_clients(char *ip, sockaddr_t *ip_saddr)
 {
 	hash_table_t *ht = ht_confirmed_client_id;
 	struct rbt_head *head_rbt;
@@ -1112,10 +1123,8 @@ static void nfs_release_v4_clients(char *ip)
 	nfs_client_id_t *cp;
 	nfs_client_record_t *recp;
 	int i;
-	sockaddr_t ip_saddr;
 
 	LogEvent(COMPONENT_STATE, "NFS Server V4 recovery release ip %s", ip);
-	ip_str_to_sockaddr(ip, &ip_saddr);
 
 	/* go through the confirmed clients looking for a match */
 	for (i = 0; i < ht->parameter.index_size; i++) {
@@ -1132,7 +1141,7 @@ restart:
 			cp = (nfs_client_id_t *)pdata->val.addr;
 			PTHREAD_MUTEX_lock(&cp->cid_mutex);
 			if ((cp->cid_confirmed == CONFIRMED_CLIENT_ID) &&
-			    ip_match(&ip_saddr, cp)) {
+			    ip_match(ip_saddr, cp)) {
 				inc_client_id_ref(cp);
 
 				/* client_record is always non-NULL. */

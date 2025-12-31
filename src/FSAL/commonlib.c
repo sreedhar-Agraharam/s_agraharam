@@ -2120,6 +2120,7 @@ fsal_status_t reopen_fsal_fd(struct fsal_obj_handle *obj_hdl,
 			     struct fsal_fd *fsal_fd, bool can_start)
 {
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
+	fsal_openflags_t new_openflag = openflags;
 
 	/* Wait for lull in io work */
 	while (!can_start && atomic_fetch_int32_t(&fsal_fd->io_work) != 0) {
@@ -2143,17 +2144,35 @@ fsal_status_t reopen_fsal_fd(struct fsal_obj_handle *obj_hdl,
 	 * Then, in case any thread is asking for read combine that,
 	 * an in case any thread is asking for write, combine that.
 	 */
-	openflags |= fsal_fd->openflags & FSAL_O_RDWR;
+	new_openflag |= fsal_fd->openflags & FSAL_O_RDWR;
 
 	if (atomic_fetch_int32_t(&fsal_fd->want_read))
-		openflags |= FSAL_O_READ;
+		new_openflag |= FSAL_O_READ;
 
 	if (atomic_fetch_int32_t(&fsal_fd->want_write))
-		openflags |= FSAL_O_WRITE;
+		new_openflag |= FSAL_O_WRITE;
 
 	/* And THEN check the combined mode against the current mode. */
-	if (!open_correct(fsal_fd->openflags, openflags)) {
-		status = fsal_reopen_fd(obj_hdl, openflags, fsal_fd);
+	if (!open_correct(fsal_fd->openflags, new_openflag)) {
+		status = fsal_reopen_fd(obj_hdl, new_openflag, fsal_fd);
+		if (openflags != new_openflag &&
+		    FSAL_IS_PERMISSION_ERR(status)) {
+			LogDebug(COMPONENT_FSAL,
+				 "fsal_reopen_fd returned %s "
+				 "with flag %d, retrying again with flag %d",
+				 fsal_err_txt(status), new_openflag, openflags);
+
+			/* We modified the open flags, but the operation failed
+			 * with EACCES or EPERM. This can happen if file
+			 * permissions have changed in the backend after the
+			 * last open, In this case, an ACL evaluation could
+			 * results in EPERM or EACCES due to insufficient
+			 * access bits for non-root users. In this case,
+			 * retry the operation with the original open flags.
+			 */
+			status = fsal_reopen_fd(obj_hdl, openflags, fsal_fd);
+		}
+
 		LogDebug(COMPONENT_FSAL, "fsal_reopen_fd returned %s",
 			 fsal_err_txt(status));
 
@@ -2669,11 +2688,15 @@ fsal_status_t fsal_start_io(struct fsal_fd **out_fd,
 	struct fsal_fd *state_fd;
 	struct state_t *openstate;
 
+	if (state == NULL) {
+		LogFullDebug(COMPONENT_FSAL,
+			     "State is NULL, using global fd, openflags = %x",
+			     openflags);
+		goto global;
+	}
+
 	LogFullDebug(COMPONENT_FSAL, "Open State = %p, State Type = %d", state,
 		     state->state_type);
-
-	if (state == NULL)
-		goto global;
 
 	/* Handle delegation states: if this is a delegation (read or write),
 	 * retrieve the associated openstate. Use the fd from that openstate
@@ -2823,7 +2846,11 @@ fsal_status_t fsal_start_io(struct fsal_fd **out_fd,
 
 		if (openstate == NULL) {
 			/* The open state was not usable so use the global fd.
-			 */
+			*/
+			LogFullDebug(
+				COMPONENT_FSAL,
+				"Lock state %p has no associated openstate, using global fd, openflags = %x",
+				state, openflags);
 			goto global;
 		}
 
@@ -2881,6 +2908,10 @@ use_related_fd:
 	 * Note that we do not allow write locks on read-only opens and read
 	 * locks on write only opens.
 	 */
+
+	LogFullDebug(COMPONENT_FSAL,
+		     "Falling back to global fd, state = %p, openflags = %x",
+		     state, openflags);
 
 global:
 

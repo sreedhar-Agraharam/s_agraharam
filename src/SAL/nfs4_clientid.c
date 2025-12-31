@@ -612,6 +612,7 @@ nfs_client_id_t *create_client_id(clientid4 clientid,
 		clientid = new_clientid();
 
 	client_rec->cid_confirmed = UNCONFIRMED_CLIENT_ID;
+	client_rec->cid_confirmed_saved = UNCONFIRMED_CLIENT_ID;
 	client_rec->cid_clientid = clientid;
 	client_rec->cid_last_renew = time(NULL);
 	client_rec->cid_client_record = client_record;
@@ -1107,7 +1108,7 @@ bool nfs_client_id_expire(nfs_client_id_t *clientid, bool make_stale,
 		return false;
 	}
 
-	if (!make_stale && !force_expire &&
+	if (clientid->cid_confirmed && !make_stale && !force_expire &&
 	    nfs_param.nfsv4_param.expired_client_threshold) {
 		/* Judging the amount of states the client owns.
 		 * If it has large number of opened files, we may not want
@@ -1177,6 +1178,7 @@ bool nfs_client_id_expire(nfs_client_id_t *clientid, bool make_stale,
 		PTHREAD_MUTEX_unlock(&clientid->cid_mutex);
 	} else {
 		/* unhash clientids that are truly expired */
+		clientid->cid_confirmed_saved = clientid->cid_confirmed;
 		clientid->cid_confirmed = EXPIRED_CLIENT_ID;
 
 		PTHREAD_MUTEX_unlock(&clientid->cid_mutex);
@@ -2019,12 +2021,12 @@ int compare_client_record(struct gsh_buffdesc *buff1,
 		return 1;
 	}
 
-	rc = cmp_sockaddr(&pkey1->cr_server_addr, &pkey2->cr_server_addr, true);
+	rc = sockaddr_cmp(&pkey1->cr_server_addr, &pkey2->cr_server_addr, true);
 
-	if (rc == 0) {
+	if (rc != 0) {
 		if (isDebug(COMPONENT_HASHTABLE))
 			LogFullDebug(COMPONENT_CLIENTID, "sockaddr mismatch");
-		return rc;
+		return 1;
 	}
 
 	rc = memcmp(pkey1->cr_client_val, pkey2->cr_client_val,

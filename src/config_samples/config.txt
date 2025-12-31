@@ -201,7 +201,7 @@ NFS_CORE_PARAM {}
 
 	mount_path_pseudo(bool, default false)
 
-	Enable_UDP(enum, values [False, True, Mount], default True)
+	Enable_UDP(list, valid values [False, True, Mount, NLM, default True)
 
 	Dbus_Name_Prefix(string, default NULL)
 
@@ -305,6 +305,8 @@ NFSV4 {}
 
 	Max_Alive_Time_For_Expired_Client(uint64, range 0 to UINT64_MAX,
 					  default 86400)
+
+	Blocking_Locks(bool, default true)
 
 DIRECTORY_SERVICES {}
 ---------------------

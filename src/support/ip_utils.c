@@ -58,6 +58,7 @@
 
 #include "log.h"
 #include "abstract_mem.h"
+#include "common_utils.h"
 
 struct cidr_addr {
 	sockaddr_t ip_addr;
@@ -208,62 +209,6 @@ int ip_str_to_sockaddr(char *ip_str, sockaddr_t *sp)
 }
 
 /**
- *
- * @brief Compare 2 sockaddrs, including ports
- *
- * @param[in] addr_1      First address
- * @param[in] addr_2      Second address
- * @param[in] ignore_port Whether to ignore the port
- *
- * @return Comparator true/false,
- */
-int cmp_sockaddr(sockaddr_t *addr_1, sockaddr_t *addr_2, bool ignore_port)
-{
-	sockaddr_t addr_ipv4_1 = {};
-	sockaddr_t addr_ipv4_2 = {};
-
-	if (addr_1->ss_family != addr_2->ss_family) {
-		addr_1 = convert_ipv6_to_ipv4(addr_1, &addr_ipv4_1);
-		addr_2 = convert_ipv6_to_ipv4(addr_2, &addr_ipv4_2);
-	}
-
-	if (addr_1->ss_family != addr_2->ss_family)
-		return 0;
-
-	switch (addr_1->ss_family) {
-	case AF_INET: {
-		struct sockaddr_in *inaddr1 = (struct sockaddr_in *)addr_1;
-		struct sockaddr_in *inaddr2 = (struct sockaddr_in *)addr_2;
-
-		return (inaddr1->sin_addr.s_addr == inaddr2->sin_addr.s_addr &&
-			(ignore_port ||
-			 inaddr1->sin_port == inaddr2->sin_port));
-	}
-	case AF_INET6: {
-		struct sockaddr_in6 *ip6addr1 = (struct sockaddr_in6 *)addr_1;
-		struct sockaddr_in6 *ip6addr2 = (struct sockaddr_in6 *)addr_2;
-
-		return (memcmp(ip6addr1->sin6_addr.s6_addr,
-			       ip6addr2->sin6_addr.s6_addr,
-			       sizeof(ip6addr2->sin6_addr.s6_addr)) == 0) &&
-		       (ignore_port ||
-			ip6addr1->sin6_port == ip6addr2->sin6_port);
-	} break;
-#ifdef RPC_VSOCK
-	case AF_VSOCK: {
-		struct sockaddr_vm *svm1 = (struct sockaddr_vm *)addr_1;
-		struct sockaddr_vm *svm2 = (struct sockaddr_vm *)addr_2;
-
-		return (svm1->svm_cid == svm2->svm_cid &&
-			(ignore_port || svm1->svm_port == svm2->svm_port));
-	} break;
-#endif /* VSOCK */
-	default:
-		return 0;
-	}
-}
-
-/**
  * @brief Canonically compare 2 sockaddrs
  *
  * @param[in] addr1       First address
@@ -272,8 +217,15 @@ int cmp_sockaddr(sockaddr_t *addr_1, sockaddr_t *addr_2, bool ignore_port)
  *
  * @return Comparator trichotomy
  */
-int sockaddr_cmpf(sockaddr_t *addr1, sockaddr_t *addr2, bool ignore_port)
+int sockaddr_cmp(sockaddr_t *addr1, sockaddr_t *addr2, bool ignore_port)
 {
+	sockaddr_t addr_ipv4_1 = {};
+	sockaddr_t addr_ipv4_2 = {};
+
+	if (addr1->ss_family != addr2->ss_family) {
+		addr1 = convert_ipv6_to_ipv4(addr1, &addr_ipv4_1);
+		addr2 = convert_ipv6_to_ipv4(addr2, &addr_ipv4_2);
+	}
 	switch (addr1->ss_family) {
 	case AF_INET: {
 		struct sockaddr_in *in1 = (struct sockaddr_in *)addr1;
@@ -496,7 +448,10 @@ CIDR *cidr_from_str(const char *addr)
 	char *mask_str = NULL;
 	int ret;
 
-	strcpy(addr_str, addr);
+	if (strlcpy(addr_str, addr, sizeof(addr_str)) >= sizeof(addr_str)) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
 
 	slash = strchr(addr_str, '/');
 
@@ -657,7 +612,7 @@ CIDR *cidr_from_inaddr(const struct in_addr *addr)
 
 	cidr = cidr_alloc();
 	memcpy(&((struct sockaddr_in *)&cidr->ip_addr)->sin_addr.s_addr, addr,
-	       sizeof(sockaddr_t));
+	       sizeof(struct in_addr));
 	cidr->ip_addr.ss_family = AF_INET;
 	cidr->mask = 32;
 

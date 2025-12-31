@@ -68,6 +68,7 @@ static struct config_item_list udp_listener_type[] = {
 	CONFIG_LIST_TOK("yes", UDP_LISTENER_ALL),
 	CONFIG_LIST_TOK("on", UDP_LISTENER_ALL),
 	CONFIG_LIST_TOK("mount", UDP_LISTENER_MOUNT),
+	CONFIG_LIST_TOK("nlm", UDP_LISTENER_NLM),
 	CONFIG_LIST_EOL
 };
 
@@ -356,8 +357,8 @@ static struct config_item core_params[] = {
 		       resolve_fs_delay),
 	CONF_ITEM_BOOL("mount_path_pseudo", false, nfs_core_param,
 		       mount_path_pseudo),
-	CONF_ITEM_ENUM_BITS("Enable_UDP", UDP_LISTENER_ALL, UDP_LISTENER_MASK,
-			    udp_listener_type, nfs_core_param, enable_UDP),
+	CONF_ITEM_LIST("Enable_UDP", UDP_LISTENER_ALL, udp_listener_type,
+		       nfs_core_param, enable_UDP),
 	CONF_ITEM_STR("Dbus_Name_Prefix", 1, 255, NULL, nfs_core_param,
 		      dbus_name_prefix),
 	CONF_ITEM_UI32("Max_Uid_To_Group_Reqs", 0, INT32_MAX, 0, nfs_core_param,
@@ -684,6 +685,8 @@ static struct config_item version4_params[] = {
 	CONF_ITEM_UI64("Max_Alive_Time_For_Expired_Client", 0, UINT64_MAX,
 		       86400, nfs_version4_parameter,
 		       max_alive_time_for_expired_client),
+	CONF_ITEM_BOOL("Blocking_Locks", true, nfs_version4_parameter,
+		       allow_blocking_locks),
 	CONFIG_EOL
 };
 

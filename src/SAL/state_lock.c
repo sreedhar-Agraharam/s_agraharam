@@ -2250,6 +2250,18 @@ state_status_t do_lock_op(struct fsal_obj_handle *obj, state_t *state,
 #endif
 	struct nfs_client_id_t *nfs4_clientid = NULL;
 
+	/* If the state is stale (under deletion), there is no locker, so return
+	 * STATE_STATE_ERROR. we do have cases where we use null state but then
+	 * the state is not stale.
+	 */
+	if (state != NULL && state->state_owner == NULL) {
+		LogWarn(COMPONENT_STATE,
+			"lock request with stale state owner "
+			"(state:)%p (owner:)%p (obj:)%p",
+			state, owner, obj);
+		return STATE_STATE_ERROR;
+	}
+
 	lock->lock_sle_type = FSAL_POSIX_LOCK;
 
 	/* Quick exit if:
@@ -2436,7 +2448,12 @@ state_status_t state_test(struct fsal_obj_handle *obj, state_t *state,
 				      "test request started");
 
 	STATELOCK_lock(obj);
-
+	if (state && !state->state_owner) {
+		/* This is a stale state, don't pass it to FSAL. */
+		LogLock(COMPONENT_STATE, NIV_WARN, "Owner released", obj, owner,
+			lock);
+		state = NULL;
+	}
 	found_entry = get_overlapping_entry(obj->state_hdl, owner, lock);
 
 	if (found_entry != NULL) {
@@ -3872,7 +3889,7 @@ static void handle_nfsv4_lock(state_block_data_t *pblock,
 			found_entry, lock_poll_check, TRACE_INFO,
 			"poll eligibility check_time {} next_poll_time {}",
 			check_time, next_poll_time);
-
+		pblock->sbd_prot.sbd_v4.snbd_last_poll_time = time(NULL);
 		lock_entry_inc_ref(found_entry);
 		if (test_blocking_lock_eligibility_schedule(found_entry) !=
 		    STATE_SUCCESS) {

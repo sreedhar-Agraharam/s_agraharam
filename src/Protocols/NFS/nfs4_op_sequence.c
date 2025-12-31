@@ -184,6 +184,11 @@ enum nfs_req_result nfs4_op_sequence(struct nfs_argop4 *op,
 
 	data->preserved_clientid = session->clientid_record;
 
+	/* Take a reference on the clientid to prevent it from being freed
+	 * during compound execution.
+	 */
+	inc_client_id_ref(data->preserved_clientid);
+
 	slotid = arg_SEQUENCE4->sa_slotid;
 
 	/* Check is slot is compliant with ca_maxrequests */
@@ -319,11 +324,8 @@ enum nfs_req_result nfs4_op_sequence(struct nfs_argop4 *op,
 		/* Check if there are actually any revoked delegations left
 		 * for this client.
 		 */
-		bool has_revoked = false;
-
-		if (session->clientid_record != NULL)
-			has_revoked = has_revoked_delegations_for_client(
-				session->clientid_record);
+		bool has_revoked = has_revoked_delegations_for_client(
+			session->clientid_record);
 
 		if (has_revoked) {
 			/* Set the flag to indicate there are revoked

@@ -776,6 +776,8 @@ typedef fs_charset_cap4 fattr4_fs_charset_cap;
 
 typedef uint32_t fattr4_layout_alignment;
 
+typedef bool_t fattr4_offline;
+
 typedef uint32_t fattr4_layout_blksize;
 
 typedef layouthint4 fattr4_layout_hint;
@@ -916,6 +918,7 @@ typedef struct sec_label4 fattr4_sec_label;
 
 /* NFSv4.3 */
 #define FATTR4_XATTR_SUPPORT 82
+#define FATTR4_OFFLINE 83
 
 /* Largest defined attribute index */
 #define FATTR4_MAX_ATTR_INDEX FATTR4_XATTR_SUPPORT

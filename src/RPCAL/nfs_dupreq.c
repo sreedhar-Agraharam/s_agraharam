@@ -132,7 +132,7 @@ struct drc_st {
 	drc_t udp_drc; /* shared DRC */
 	struct rbtree_x tcp_drc_recycle_t;
 	TAILQ_HEAD(drc_st_tailq, drc) tcp_drc_recycle_q; /* fifo */
-	int32_t tcp_drc_recycle_qlen;
+	uint32_t tcp_drc_recycle_qlen;
 	time_t last_expire_check;
 	uint32_t expire_delta;
 };
@@ -195,7 +195,7 @@ static inline int dupreq_shared_cmpf(const struct opr_rbtree_node *lhs,
 	lk = opr_containerof(lhs, dupreq_entry_t, rbt_k);
 	rk = opr_containerof(rhs, dupreq_entry_t, rbt_k);
 
-	switch (sockaddr_cmpf(&lk->hin.addr, &rk->hin.addr, false)) {
+	switch (sockaddr_cmp(&lk->hin.addr, &rk->hin.addr, false)) {
 	case -1:
 		return -1;
 	case 0:
@@ -262,7 +262,7 @@ static inline int drc_recycle_cmpf(const struct opr_rbtree_node *lhs,
 	lk = opr_containerof(lhs, drc_t, d_u.tcp.recycle_k);
 	rk = opr_containerof(rhs, drc_t, d_u.tcp.recycle_k);
 
-	return sockaddr_cmpf(&lk->d_u.tcp.addr, &rk->d_u.tcp.addr, false);
+	return sockaddr_cmp(&lk->d_u.tcp.addr, &rk->d_u.tcp.addr, false);
 }
 
 /**
@@ -1510,5 +1510,11 @@ int for_each_tcp_drc(void (*cb)(drc_t *drc, void *state), void *state)
  */
 uint32_t get_tcp_drc_recycle_qlen(void)
 {
-	return drc_st->tcp_drc_recycle_qlen;
+	uint32_t len;
+
+	DRC_ST_LOCK();
+	len = drc_st->tcp_drc_recycle_qlen;
+	DRC_ST_UNLOCK();
+
+	return len;
 }

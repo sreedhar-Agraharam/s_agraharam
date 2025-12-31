@@ -204,10 +204,11 @@ Dbus_Name_Prefix
     single host. The prefix should be different for every ganesha instance. If
     this is set, the dbus name will be <prefix>.org.ganesha.nfsd
 
-Enable_UDP(enum, values [False, True, Mount], default True)
+Enable_UDP(list, valid values [False, True, Mount, NLM], default True)
     Whether to create UDP listeners for Mount, NFS, NLM, RQUOTA, and register
     them with portmapper. Set to false, e.g., to run as non-root. Set to Mount
-    to enable only Mount UDP listener.
+    to enable only Mount UDP listener. Set to Mount, NLM to enable
+    only Mount and NLM UDP listeners.
 
 Max_Uid_To_Group_Reqs(uint32, range 0 to INT32_MAX, default 0)
     Maximum number of concurrent uid2grp requests that can be made by ganesha.
@@ -612,6 +613,13 @@ Max_Alive_Time_For_Expired_Client(uint64, range 0 to UINT64_MAX, default 86400)
     Specify the max amount of time till which to keep the unresponsive client
     in memory, beyond which Ganesha would start reaping and expire it off.
     Comes to play if the config Expired_Client_Threshold is not set to ZERO.
+
+Blocking_Locks(bool, default true)
+    Whether to allow blocking locks (READW_LT/WRITEW_LT) for NFSv4. When set
+    to false, blocking lock requests will be treated as non-blocking locks
+    (READ_LT/WRITE_LT). This means that if a lock cannot be granted immediately
+    due to a conflict, the server will return NFS4ERR_DENIED instead of
+    blocking the request and waiting for the lock to become available.
 
 RADOS_KV {}
 --------------------------------------------------------------------------------

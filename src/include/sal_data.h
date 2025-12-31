@@ -762,6 +762,9 @@ struct nfs_client_id_t {
 	verifier4 cid_incoming_verifier; /*< Most recently supplied verifier */
 	time_t cid_last_renew; /*< Time of last renewal */
 	nfs_clientid_confirm_state_t cid_confirmed; /*< Confirm/expire state */
+	nfs_clientid_confirm_state_t
+		cid_confirmed_saved; /* hang on to cid_confirmed for
+					v4.0 unmount cid cleanup */
 	bool cid_allow_reclaim; /*< Can still reclaim state? */
 	nfs_client_cred_t cid_credential; /*< Client credential */
 	char *cid_recov_tag; /*< Recovery tag */
@@ -1278,7 +1281,8 @@ struct state_async_queue_t {
 typedef struct nfs_grace_start {
 	int event; /*< Reason for grace period, see EVENT_nnn */
 	int nodeid; /*< Node from which we are taking over */
-	char *ipaddr; /*< IP of failed node */
+	char *ipaddr; /*< IP of releasing/takeover node (string) */
+	sockaddr_t sa; /*< IP of releasing/takeover node (sockaddr_t) */
 } nfs_grace_start_t;
 
 /* Memory pools */

@@ -616,12 +616,12 @@ void mark_sessions_have_revoked_delegations(nfs_client_id_t *clientid)
 		return;
 	}
 
-	pthread_mutex_lock(&clientid->cid_mutex);
+	PTHREAD_MUTEX_lock(&clientid->cid_mutex);
 	glist_for_each(glist, &clientid->cid_cb.v41.cb_session_list) {
 		session = glist_entry(glist, nfs41_session_t, session_link);
 		session->has_revoked_delegations = true;
 	}
-	pthread_mutex_unlock(&clientid->cid_mutex);
+	PTHREAD_MUTEX_unlock(&clientid->cid_mutex);
 
 	LogDebug(COMPONENT_STATE, "Marked the sessions for client 0x%llx",
 		 (unsigned long long)clientid->cid_clientid);
@@ -645,7 +645,7 @@ void remove_revoked_stateid(const stateid4 *stateid)
 	struct revoked_delegation *entry;
 	bool found = false;
 
-	pthread_mutex_lock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_lock(&revoked_delegations_lock);
 	glist_for_each_safe(pos, tmp, &revoked_delegations_list) {
 		entry = glist_entry(pos, struct revoked_delegation, list);
 		if (memcmp(&entry->stateid, stateid, sizeof(stateid4)) == 0) {
@@ -662,7 +662,7 @@ void remove_revoked_stateid(const stateid4 *stateid)
 			COMPONENT_STATE,
 			"Did not find revoked delegation stateid in revoked list");
 	}
-	pthread_mutex_unlock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_unlock(&revoked_delegations_lock);
 }
 
 /**
@@ -685,7 +685,7 @@ bool is_stateid_revoked(const stateid4 *stateid)
 	struct glist_head *pos;
 	struct revoked_delegation *entry;
 
-	pthread_mutex_lock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_lock(&revoked_delegations_lock);
 	glist_for_each(pos, &revoked_delegations_list) {
 		entry = glist_entry(pos, struct revoked_delegation, list);
 		if (memcmp(&entry->stateid, stateid, sizeof(stateid4)) == 0) {
@@ -693,7 +693,7 @@ bool is_stateid_revoked(const stateid4 *stateid)
 			break;
 		}
 	}
-	pthread_mutex_unlock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_unlock(&revoked_delegations_lock);
 
 	return found;
 }
@@ -725,9 +725,9 @@ static void add_to_revoked_delegations(state_t *state)
 	memcpy(entry->stateid.other, state->stateid_other,
 	       sizeof(entry->stateid.other));
 
-	pthread_mutex_lock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_lock(&revoked_delegations_lock);
 	glist_add(&revoked_delegations_list, &entry->list);
-	pthread_mutex_unlock(&revoked_delegations_lock);
+	PTHREAD_MUTEX_unlock(&revoked_delegations_lock);
 
 	LogDebug(
 		COMPONENT_NFS_V4,
@@ -903,42 +903,105 @@ bool state_deleg_conflict_impl(struct fsal_obj_handle *obj, bool write)
 		return false;
 
 	struct file_deleg_stats *deleg_stats;
-	struct gsh_client *deleg_client = NULL;
-	open_delegation_type4 deleg_type;
-	bool is_read_deleg;
-	bool is_write_deleg;
+	const uint64_t *current_clientid = NULL;
+	struct glist_head *glist;
+	state_t *state;
+	/* true when current op’s client already holds a delegation */
+	bool same_client_has_deleg = false;
+	/* true when another client holds a WRITE delegation */
+	bool other_client_has_write = false;
+	/* count of delegations that are still active */
+	unsigned int observed_delegations = 0;
 
 	deleg_stats = &obj->state_hdl->file.fdeleg_stats;
-	deleg_type = deleg_stats->fds_deleg_type;
 
-	if (obj->state_hdl->file.write_delegated)
-		deleg_client =
-			obj->state_hdl->file.write_deleg_client->gsh_client;
-
-	/* Check delegation type - handles both standard and
-	 * ATTRS_DELEG types.
+	/* Cache the current request’s clientid if available. We use it
+	 * to decide whether a delegation belongs to the same client or
+	 * a different one.
 	 */
-	is_read_deleg = (deleg_type == OPEN_DELEGATE_READ ||
-			 deleg_type == OPEN_DELEGATE_READ_ATTRS_DELEG);
-	is_write_deleg = (deleg_type == OPEN_DELEGATE_WRITE ||
-			  deleg_type == OPEN_DELEGATE_WRITE_ATTRS_DELEG);
+	if (op_ctx != NULL && op_ctx->clientid != NULL)
+		current_clientid = op_ctx->clientid;
 
-	if (deleg_stats->fds_curr_delegations > 0 &&
-	    ((is_read_deleg && write) ||
-	     (is_write_deleg && deleg_client != op_ctx->client))) {
-		LogDebug(
-			COMPONENT_STATE,
-			"While trying to perform a %s op, found a conflicting %s delegation",
-			write ? "write" : "read",
-			is_write_deleg ? "WRITE" : "READ");
-		if (async_delegrecall(general_fridge, obj) != 0)
-			LogCrit(COMPONENT_STATE,
-				"Failed to start thread to recall delegation from conflicting operation.");
-		return true;
+	/* Scan every delegation state under the file. We consider both
+	 * “granted” and “recall-in-progress” delegations as active
+	 * because they still block conflicting opens until the client
+	 * returns them.
+	 */
+	if (deleg_stats->fds_curr_delegations > 0) {
+		glist_for_each(glist, &obj->state_hdl->file.list_of_states) {
+			state = glist_entry(glist, state_t, state_list);
+
+			if (state->state_type != STATE_TYPE_DELEG)
+				continue;
+
+			if (state->state_data.deleg.sd_state != DELEG_GRANTED &&
+			    state->state_data.deleg.sd_state !=
+				    DELEG_RECALL_WIP)
+				continue;
+
+			nfs_client_id_t *state_client =
+				state->state_owner->so_owner.so_nfs4_owner
+					.so_clientrec;
+			bool same_client = false;
+
+			if (state_client != NULL && current_clientid != NULL &&
+			    state_client->cid_clientid == *current_clientid)
+				same_client = true;
+
+			if (same_client)
+				same_client_has_deleg = true;
+			else if (state->state_data.deleg.sd_type ==
+					 OPEN_DELEGATE_WRITE ||
+				 state->state_data.deleg.sd_type ==
+					 OPEN_DELEGATE_WRITE_ATTRS_DELEG)
+				other_client_has_write = true;
+
+			observed_delegations++;
+		}
 	}
-	return false;
-}
 
+	LogFullDebug(
+		COMPONENT_STATE,
+		"write=%d same_client_has_deleg=%d other_client_has_write=%d total=%u",
+		write, same_client_has_deleg, other_client_has_write,
+		observed_delegations);
+
+	/* No delegations still active so no conflict. */
+	if (observed_delegations == 0)
+		return false;
+
+	/* Write requests: allow the same client to proceed only when
+	 * it is the sole delegate (DELEG23 scenario).
+	 */
+	if (write) {
+		if (observed_delegations == 1 && same_client_has_deleg)
+			return false;
+
+		LogFullDebug(COMPONENT_STATE,
+			     "Write request conflicts with existing delegation");
+		goto recall;
+	}
+
+	/* Read requests conflict only when another client already
+	 * holds a WRITE delegation.
+	 */
+	if (other_client_has_write) {
+		LogFullDebug(
+			COMPONENT_STATE,
+			"Read request conflicts with other client's WRITE delegation");
+		goto recall;
+	}
+
+	/* No conflict detected. */
+	return false;
+
+recall:
+	if (async_delegrecall(general_fridge, obj) != 0)
+		LogCrit(COMPONENT_STATE,
+			"Failed to start thread to recall delegation from conflicting operation.");
+
+	return true;
+}
 /**
  * @brief Acquire st_lock and check if an operation is conflicting
  *        with delegations.

@@ -930,6 +930,18 @@ static int fsal_update_cfg_commit(void *node, void *link_mem, void *self_struct,
 	LogDebug(COMPONENT_EXPORT, "Export %d FSAL config update processed",
 		 export->export_id);
 
+	/* Invoke asynchronous dynamic delegation option parsing implementation.
+	 * Check if the delegation option was updated and recall an outstanding
+	 * delegation if necessary.
+	 */
+	if (async_deleg_transition_handler(general_fridge, probe_exp) != 0)
+		LogCrit(COMPONENT_STATE,
+			"Failed to start thread to deleg transition");
+
+	/* Call enable_delegations() here so that we set the deleg timeout
+	 * if delegation option was enabled dynamically.
+	 */
+	mdcache_enable_delegations(probe_exp->fsal_export, export);
 err:
 
 	release_op_context();
@@ -2101,10 +2113,10 @@ static struct config_item_list squash_types[] = {
 static struct config_item_list delegations[] = {
 	CONFIG_LIST_TOK("NONE", EXPORT_OPTION_NO_DELEGATIONS),
 	CONFIG_LIST_TOK("Read", EXPORT_OPTION_READ_DELEG),
-	CONFIG_LIST_TOK("Write", EXPORT_OPTION_WRITE_DELEG),
+	CONFIG_LIST_TOK("Write", EXPORT_OPTION_DELEGATIONS),
 	CONFIG_LIST_TOK("Readwrite", EXPORT_OPTION_DELEGATIONS),
 	CONFIG_LIST_TOK("R", EXPORT_OPTION_READ_DELEG),
-	CONFIG_LIST_TOK("W", EXPORT_OPTION_WRITE_DELEG),
+	CONFIG_LIST_TOK("W", EXPORT_OPTION_DELEGATIONS),
 	CONFIG_LIST_TOK("RW", EXPORT_OPTION_DELEGATIONS),
 	CONFIG_LIST_EOL
 };
@@ -2112,10 +2124,10 @@ static struct config_item_list delegations[] = {
 struct config_item_list deleg_types[] = {
 	CONFIG_LIST_TOK("NONE", FSAL_OPTION_NO_DELEGATIONS),
 	CONFIG_LIST_TOK("Read", FSAL_OPTION_FILE_READ_DELEG),
-	CONFIG_LIST_TOK("Write", FSAL_OPTION_FILE_WRITE_DELEG),
+	CONFIG_LIST_TOK("Write", FSAL_OPTION_FILE_DELEGATIONS),
 	CONFIG_LIST_TOK("Readwrite", FSAL_OPTION_FILE_DELEGATIONS),
 	CONFIG_LIST_TOK("R", FSAL_OPTION_FILE_READ_DELEG),
-	CONFIG_LIST_TOK("W", FSAL_OPTION_FILE_WRITE_DELEG),
+	CONFIG_LIST_TOK("W", FSAL_OPTION_FILE_DELEGATIONS),
 	CONFIG_LIST_TOK("RW", FSAL_OPTION_FILE_DELEGATIONS),
 	CONFIG_LIST_EOL
 };

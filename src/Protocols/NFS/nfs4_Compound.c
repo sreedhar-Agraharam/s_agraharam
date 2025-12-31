@@ -470,7 +470,7 @@ static const struct nfs4_op_desc optabv4[] = {
 		.name = "OP_LAYOUTGET",
 		.funct = nfs4_op_layoutget,
 		.resume = nfs4_default_resume,
-		.free_res = nfs4_op_reclaim_complete_Free,
+		.free_res = nfs4_op_layoutget_Free,
 		.resp_size = VARIABLE_RESP_SIZE,
 		.exp_perm_flags = EXPORT_OPTION_MD_READ_ACCESS},
 	[NFS4_OP_LAYOUTRETURN] = {
@@ -1053,6 +1053,9 @@ void complete_nfs4_compound(compound_data_t *data, int status,
 	if (data->preserved_clientid != NULL) {
 		/* Update and release lease */
 		update_lease_simple(data->preserved_clientid);
+
+		/* Release the reference taken on the clientid */
+		dec_client_id_ref(data->preserved_clientid);
 	}
 
 	if (status != NFS4_OK)

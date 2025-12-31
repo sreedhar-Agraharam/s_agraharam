@@ -229,7 +229,9 @@ typedef enum protos {
 #define UDP_LISTENER_NONE 0
 #define UDP_LISTENER_ALL 0x00000001
 #define UDP_LISTENER_MOUNT 0x00000002
-#define UDP_LISTENER_MASK (UDP_LISTENER_ALL | UDP_LISTENER_MOUNT)
+#define UDP_LISTENER_NLM 0x00000004
+#define UDP_LISTENER_MASK \
+	(UDP_LISTENER_ALL | UDP_LISTENER_MOUNT | UDP_LISTENER_NLM)
 
 #define ROOT_KERBEROS_PRINCIPAL_NONE (1 << 0)
 #define ROOT_KERBEROS_PRINCIPAL_NFS (1 << 1)
@@ -705,6 +707,9 @@ typedef struct nfs_version4_parameter {
 	 * in memory, beyond which Ganesha would start reaping & expire it off.
 	 */
 	uint64_t max_alive_time_for_expired_client;
+	/** Whether to allow blocking locks (READW_LT/WRITEW_LT). Defaults to
+	 * true and settable with Blocking_Locks. */
+	bool allow_blocking_locks;
 
 } nfs_version4_parameter_t;
 
