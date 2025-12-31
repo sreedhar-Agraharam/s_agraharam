@@ -55,6 +55,10 @@
 #include "subfsal.h"
 #include "gsh_config.h"
 
+#ifdef USE_MONITORING
+#include "dynamic_metrics.h"
+#endif
+
 /* helpers to/from other VFS objects
  */
 
@@ -139,6 +143,9 @@ static fsal_status_t get_dynamic_info(struct fsal_export *exp_hdl,
 	infop->time_delta.tv_sec = 0;
 	infop->time_delta.tv_nsec = FSAL_DEFAULT_TIME_DELTA_NSEC;
 
+#ifdef USE_MONITORING
+	dynamic_metrics_export_info(infop->total_bytes, infop->free_bytes, infop->total_files);
+#endif
 out:
 	status = fsal_complete_io(obj_hdl, out_fd);
 	LogFullDebug(COMPONENT_FSAL, "fsal_complete_io returned %s",
