@@ -1571,6 +1571,9 @@ fsal_status_t fsal_rename(struct fsal_obj_handle *dir_src, const char *oldname,
 		return fsalstat(ERR_FSAL_INVAL, 0);
 	}
 
+	/* sticky correction */
+	LogDebug(COMPONENT_NFS_V4, "Inside fsal_helpper.c file , owner id is %ld and caller uid is %d",olddir_pre_attrs_out->owner,op_ctx->creds.caller_uid);
+
 	/* Check for object existence in source directory */
 	fsal_status = fsal_lookup(dir_src, oldname, &lookup_src, NULL);
 

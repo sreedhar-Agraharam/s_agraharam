@@ -4826,19 +4826,59 @@ int nfs4_Fattr_To_fsinfo(fsal_dynamicfsinfo_t *dinfo, fattr4 *Fattr)
  * @brief: is a directory's sticky bit set?
  *
  */
-bool is_sticky_bit_set(struct fsal_obj_handle *obj,
-		       const struct fsal_attrlist *attr)
+bool is_sticky_bit_set(struct fsal_obj_handle *obj)
 {
-	if (attr->mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+	struct fsal_attrlist *attr;
+	attr = (struct fsal_attrlist *)malloc(sizeof(struct fsal_attrlist));
+	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
+
+	status = obj->obj_ops->getattrs(obj, attr);
+
+	if (FSAL_IS_ERROR(status)) {
+		/* Drop the message level to debug if referral belongs
+                         * to deleted file to avoid flood of messages.
+                         */
+		if (status.major == ERR_FSAL_STALE) {
+			LogDebug(
+				COMPONENT_FSAL,
+				"Failed to get attrs for referral, handle: %p (probably deleted), valid_mask: %" PRIx64
+				", request_mask: %" PRIx64
+				", supported: %" PRIx64 ", error: %s",
+				obj, attr->valid_mask, attr->request_mask,
+				attr->supported, fsal_err_txt(status));
+		} else {
+			LogEventLimited(
+				COMPONENT_FSAL,
+				"Failed to get attrs for referral, handle: %p, valid_mask: %" PRIx64
+				", request_mask: %" PRIx64
+				", supported: %" PRIx64 ", error: %s",
+				obj, attr->valid_mask, attr->request_mask,
+				attr->supported, fsal_err_txt(status));
+		}
 		return false;
+	}
+	LogDebug(COMPONENT_NFS_V4,"mode is %o",attr->mode);
+	LogDebug(
+		COMPONENT_NFS_V4,
+		"Checking attrs for sticky_btit property, handle: %p, valid_mask: %" PRIx64
+		", request_mask: %" PRIx64 ", supported: %" PRIx64,
+		obj, attr->valid_mask, attr->request_mask, attr->supported);
+
+		if (!fsal_obj_handle_is(obj, DIRECTORY)) return false;
 
 	if (!(attr->mode & S_ISVTX))
+	{
+		LogDebug(COMPONENT_NFS_V4,"attr->mode is not sticky");	
 		return false;
+	}
 
 	LogDebug(COMPONENT_NFS_V4, "sticky bit is set on %" PRIi64,
 		 obj->fileid);
 
-	return true;
+	if (!(attr->owner == op_ctx->creds.caller_uid))
+		return false;
+
+	return false;
 }
 
 #define COMPOUND_EXTRA_ROOM 4096
