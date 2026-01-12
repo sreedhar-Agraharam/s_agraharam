@@ -85,6 +85,7 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 			    arg_RENAME4->newname.utf8string_len,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->newname));
 
+
 	resp->resop = NFS4_OP_RENAME;
 	res_RENAME4->status = NFS4_OK;
 
