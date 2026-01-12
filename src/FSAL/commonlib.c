@@ -71,6 +71,7 @@
 #include "pnfs_utils.h"
 #include "atomic_utils.h"
 #include "sys_resource.h"
+
 #ifdef USE_DBUS
 #include "gsh_dbus.h"
 #endif
@@ -1077,7 +1078,8 @@ fsal_status_t fsal_acl_to_mode(struct fsal_attrlist *attrs)
 		return fsalstat(ERR_FSAL_NO_ERROR, 0);
 	if (!attrs->acl || attrs->acl->naces == 0)
 		return fsalstat(ERR_FSAL_NO_ERROR, 0);
-
+	
+	LogDebug(COMPONENT_NFS_V4, "mode is %d",attrs->mode);
 	/* Clear all mode bits except the first 3 special bits */
 	attrs->mode &= (S_ISUID | S_ISGID | S_ISVTX);
 
@@ -3185,11 +3187,11 @@ bool fsal_common_is_referral(struct fsal_obj_handle *obj_hdl,
 			return false;
 		}
 	}
-
+	
 	if (!fsal_obj_handle_is(obj_hdl, DIRECTORY))
 		return false;
 
-	if (!is_sticky_bit_set(obj_hdl, attrs))
+	if (!attrs->fs_locations)
 		return false;
 
 	LogDebug(COMPONENT_FSAL, "Referral found for handle: %p", obj_hdl);

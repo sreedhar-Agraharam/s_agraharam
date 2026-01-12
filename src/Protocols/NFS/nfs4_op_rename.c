@@ -82,6 +82,7 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 			    arg_RENAME4->newname.utf8string_len,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->newname));
 
+
 	resp->resop = NFS4_OP_RENAME;
 	res_RENAME4->status = NFS4_OK;
 
@@ -135,6 +136,39 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 
 	res_RENAME4->RENAME4res_u.resok4.target_cinfo.before =
 		fsal_get_changeid4(dst_obj);
+
+	/* check for sticky bit */
+	LogDebug(COMPONENT_NFS_V4, "Checking User and Owner are different");
+	if(is_sticky_bit_set(data->current_obj))
+	{
+		LogDebug(COMPONENT_NFS_V4, "User and Owner are different");
+		res_RENAME4->status = NFS4ERR_PERM;
+		goto out;
+	}
+/*
+	curr_attr = (struct fsal_attrlist *)malloc(sizeof(struct fsal_attrlist));
+	attrmask_t req_mask = ATTR_TYPE | ATTR_MODE;
+	curr_attr->request_mask |= req_mask;
+	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
+	status = data->current_obj->obj_ops->getattrs(data->current_obj, curr_attr);
+	if (FSAL_IS_ERROR(status)) {
+		LogDebug(COMPONENT_NFS_V4, "Inside op_rename , came into error part");
+		res_RENAME4->status = NFS4ERR_INVAL;
+		goto out;
+	}
+	uid_t caller = op_ctx->creds.caller_uid;
+	LogDebug(COMPONENT_NFS_V4, "Inside op_rename and owner is %ld and called id is %d",curr_attr->owner,caller);
+	if(curr_attr->owner != (uint64_t)caller)
+	{
+		LogDebug(COMPONENT_NFS_V4, "User and Owner are different");
+		res_RENAME4->status = NFS4ERR_PERM;
+		goto out;
+	}
+
+
+*/
+
+	/* End of sticky bit check */
 
 	res_RENAME4->status = nfs4_Errno_status(
 		fsal_rename(src_obj, arg_RENAME4->oldname.utf8string_val,
