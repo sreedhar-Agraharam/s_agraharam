@@ -4828,11 +4828,11 @@ int nfs4_Fattr_To_fsinfo(fsal_dynamicfsinfo_t *dinfo, fattr4 *Fattr)
  */
 bool is_sticky_bit_set(struct fsal_obj_handle *obj)
 {
-	struct fsal_attrlist *attr;
-	attr = (struct fsal_attrlist *)malloc(sizeof(struct fsal_attrlist));
+	struct fsal_attrlist attrs;
+	fsal_prepare_attrs(&attrs, ATTR_MODE | ATTR_OWNER | ATTR_TYPE);
 	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
 
-	status = obj->obj_ops->getattrs(obj, attr);
+	status = obj->obj_ops->getattrs(obj, &attrs);
 
 	if (FSAL_IS_ERROR(status)) {
 		/* Drop the message level to debug if referral belongs
@@ -4844,39 +4844,31 @@ bool is_sticky_bit_set(struct fsal_obj_handle *obj)
 				"Failed to get attrs for referral, handle: %p (probably deleted), valid_mask: %" PRIx64
 				", request_mask: %" PRIx64
 				", supported: %" PRIx64 ", error: %s",
-				obj, attr->valid_mask, attr->request_mask,
-				attr->supported, fsal_err_txt(status));
+				obj, attrs.valid_mask, attrs.request_mask,
+				attrs.supported, fsal_err_txt(status));
 		} else {
 			LogEventLimited(
 				COMPONENT_FSAL,
 				"Failed to get attrs for referral, handle: %p, valid_mask: %" PRIx64
 				", request_mask: %" PRIx64
 				", supported: %" PRIx64 ", error: %s",
-				obj, attr->valid_mask, attr->request_mask,
-				attr->supported, fsal_err_txt(status));
+				obj, attrs.valid_mask, attrs.request_mask,
+				attrs.supported, fsal_err_txt(status));
 		}
 		return false;
 	}
-	LogDebug(COMPONENT_NFS_V4,"mode is %o",attr->mode);
 	LogDebug(
-		COMPONENT_NFS_V4,
-		"Checking attrs for sticky_btit property, handle: %p, valid_mask: %" PRIx64
+		COMPONENT_NFSPROTO,
+		"Checking attrs for sticky_bit property, handle: %p, valid_mask: %" PRIx64
 		", request_mask: %" PRIx64 ", supported: %" PRIx64,
-		obj, attr->valid_mask, attr->request_mask, attr->supported);
+		obj, attrs.valid_mask, attrs.request_mask, attrs.supported);
 
-		if (!fsal_obj_handle_is(obj, DIRECTORY)) return false;
-
-	if (!(attr->mode & S_ISVTX))
-	{
-		LogDebug(COMPONENT_NFS_V4,"attr->mode is not sticky");	
-		return false;
+	if ((attrs.mode & S_ISVTX) &&
+	    (attrs.owner != op_ctx->creds.caller_uid)) {
+		LogDebug(COMPONENT_NFS_V4, "Sticky Bit SET on %" PRIi64,
+			 obj->fileid);
+		return true;
 	}
-
-	LogDebug(COMPONENT_NFS_V4, "sticky bit is set on %" PRIi64,
-		 obj->fileid);
-
-	if (!(attr->owner == op_ctx->creds.caller_uid))
-		return false;
 
 	return false;
 }

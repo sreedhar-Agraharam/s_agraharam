@@ -44,6 +44,8 @@
 #include "nfs_file_handle.h"
 #include "sal_functions.h"
 #include "fsal.h"
+#include "FSAL/fsal_commonlib.h"
+#include <sys/stat.h>
 
 #include "gsh_lttng/gsh_lttng.h"
 #if defined(USE_LTTNG) && !defined(LTTNG_PARSING)
@@ -70,6 +72,8 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 	RENAME4res *const res_RENAME4 = &resp->nfs_resop4_u.oprename;
 	struct fsal_obj_handle *dst_obj = NULL;
 	struct fsal_obj_handle *src_obj = NULL;
+	struct fsal_obj_handle *child_obj = NULL;
+	fsal_status_t st;
 	struct fsal_attrlist olddir_pre_attrs_out, olddir_post_attrs_out,
 		newdir_pre_attrs_out, newdir_post_attrs_out;
 	bool is_olddir_pre_attrs_valid, is_olddir_post_attrs_valid,
@@ -81,7 +85,6 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->oldname),
 			    arg_RENAME4->newname.utf8string_len,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->newname));
-
 
 	resp->resop = NFS4_OP_RENAME;
 	res_RENAME4->status = NFS4_OK;
@@ -137,36 +140,24 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 	res_RENAME4->RENAME4res_u.resok4.target_cinfo.before =
 		fsal_get_changeid4(dst_obj);
 
-	/* check for sticky bit */
-	LogDebug(COMPONENT_NFS_V4, "Checking User and Owner are different");
-	if(is_sticky_bit_set(data->current_obj))
-	{
-		LogDebug(COMPONENT_NFS_V4, "User and Owner are different");
-		res_RENAME4->status = NFS4ERR_PERM;
-		goto out;
-	}
-/*
-	curr_attr = (struct fsal_attrlist *)malloc(sizeof(struct fsal_attrlist));
-	attrmask_t req_mask = ATTR_TYPE | ATTR_MODE;
-	curr_attr->request_mask |= req_mask;
-	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-	status = data->current_obj->obj_ops->getattrs(data->current_obj, curr_attr);
-	if (FSAL_IS_ERROR(status)) {
-		LogDebug(COMPONENT_NFS_V4, "Inside op_rename , came into error part");
-		res_RENAME4->status = NFS4ERR_INVAL;
-		goto out;
-	}
-	uid_t caller = op_ctx->creds.caller_uid;
-	LogDebug(COMPONENT_NFS_V4, "Inside op_rename and owner is %ld and called id is %d",curr_attr->owner,caller);
-	if(curr_attr->owner != (uint64_t)caller)
-	{
-		LogDebug(COMPONENT_NFS_V4, "User and Owner are different");
-		res_RENAME4->status = NFS4ERR_PERM;
+	/* check for sticky bit properties */
+
+	st = src_obj->obj_ops->lookup(src_obj,
+				      arg_RENAME4->oldname.utf8string_val,
+				      &child_obj, NULL);
+	if (FSAL_IS_ERROR(st) || child_obj == NULL) {
+		LogDebug(COMPONENT_NFS_V4,
+			 "RENAME: lookup(oldname) failed major=%d minor=%d",
+			 st.major, st.minor);
+		res_RENAME4->status = NFS4ERR_NOENT;
 		goto out;
 	}
 
-
-*/
+	if (fsal_obj_handle_is(child_obj, DIRECTORY) &&
+	    is_sticky_bit_set(child_obj)) {
+		res_RENAME4->status = NFS4ERR_PERM;
+		goto out;
+	}
 
 	/* End of sticky bit check */
 
@@ -226,6 +217,8 @@ out:
 
 	fsal_release_attrs(&newdir_pre_attrs_out);
 	fsal_release_attrs(&newdir_post_attrs_out);
+
+	child_obj->obj_ops->put_ref(child_obj);
 
 	GSH_AUTO_TRACEPOINT(
 		nfs4, op_rename_end, TRACE_INFO,
