@@ -45,6 +45,7 @@
 #include "sal_functions.h"
 #include "fsal.h"
 #include "FSAL/fsal_commonlib.h"
+#include <sys/stat.h>
 
 #include "gsh_lttng/gsh_lttng.h"
 #if defined(USE_LTTNG) && !defined(LTTNG_PARSING)
@@ -84,7 +85,6 @@ enum nfs_req_result nfs4_op_rename(struct nfs_argop4 *op, compound_data_t *data,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->oldname),
 			    arg_RENAME4->newname.utf8string_len,
 			    TP_UTF8STR_TRUNCATED(arg_RENAME4->newname));
-
 
 	resp->resop = NFS4_OP_RENAME;
 	res_RENAME4->status = NFS4_OK;
