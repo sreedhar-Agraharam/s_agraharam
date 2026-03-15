@@ -42,7 +42,10 @@ include(TestBigEndian)
 # Set GANESHA_TOP_CMAKE_DIR to this CMakeLists.txt path
 set(GANESHA_TOP_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${GANESHA_TOP_CMAKE_DIR}/cmake/modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${GANESHA_TOP_CMAKE_DIR}/cmake/modules/") #CMAKE_MODULE_PATH is the variable from cmake build system and
+#we are adding up more paths to the including paths and this variable will help us to include .cmake files where few more variables are set and few
+# more functions are set to use in CMakeLists.txt files.
+
 
 project(nfs-ganesha C CXX)
 # Project versioning
@@ -1835,7 +1838,7 @@ if (USE_MONITORING)
   target_link_libraries(ganesha.nfsd ganesha_monitoring)
 endif (USE_MONITORING)
 set_target_properties(ganesha.nfsd PROPERTIES COMPILE_FLAGS "-fPIC")
-install(TARGETS ganesha.nfsd COMPONENT daemon DESTINATION bin)
+install(TARGETS ganesha.nfsd COMPONENT daemon DESTINATION bin)   # intall our targets to the pah /bin/
 
 ########### next target ###############
 
