@@ -1765,7 +1765,7 @@ else(USE_NFSIDMAP)
 endif(USE_NFSIDMAP)
 
 if(USE_MONITORING)
-  set(BCOND_MONITORING "%bcond_without")
+  set(BCOND_MONITORING "%bcond_without") # Here bcond_without means in RPM BUILDS , USE_MONITORING is SET ON. and cond_with means RPM build is built wihtout monitoring.
 else(USE_MONITORING)
   set(BCOND_MONITORING "%bcond_with")
 endif(USE_MONITORING)
