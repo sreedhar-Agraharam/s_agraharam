@@ -36,12 +36,15 @@
 
 typedef struct sockaddr_storage sockaddr_t;
 
+typedef void (*nfs_metrics_update_cb_t)(void);
 #ifdef USE_MONITORING
 
 #ifndef __cplusplus
 void prometheus_exposer__start(const sockaddr_t *addr, uint16_t port,
 			       prometheus_registry_handle_t registry_handle);
 void prometheus_exposer__stop(prometheus_registry_handle_t registry_handle);
+/** Register a function to collect the metrics t the time of scrape */
+void nfs_register_metrics_collector(nfs_metrics_update_cb_t cb);
 #else /* __cplusplus */
 
 #include <thread>
@@ -50,12 +53,22 @@ void prometheus_exposer__stop(prometheus_registry_handle_t registry_handle);
 #include "prometheus/registry.h"
 
 extern "C" {
+
 void prometheus_exposer__start(const sockaddr_t *addr, uint16_t port,
 			       prometheus_registry_handle_t registry_handle);
 void prometheus_exposer__stop(prometheus_registry_handle_t registry_handle);
 
 void update_mem_info(void);
+
+/** Register a function to collect the metrics t the time of scrape */
+void nfs_register_metrics_collector(nfs_metrics_update_cb_t cb);
+
+
+
 } /* extern "C" */
+
+/* Function to call all metrics collection */
+void update_metrics(void);
 
 namespace ganesha_monitoring
 {
@@ -109,6 +122,10 @@ prometheus_exposer__start(const sockaddr_t *UNUSED(addr), uint16_t UNUSED(port),
 
 static inline void
 prometheus_exposer__stop(prometheus_registry_handle_t UNUSED(registry_handle))
+{
+}
+
+static inline void nfs_register_metrics_collector(nfs_metrics_update_cb_t UNUSED(cb))
 {
 }
 #endif /* USE_MONITORING */

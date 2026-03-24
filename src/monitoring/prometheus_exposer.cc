@@ -41,7 +41,6 @@
 
 #include "prometheus_exposer.h"
 #include "dynamic_metrics.h"
-
 #ifdef USE_MONITORING
 
 #define PERROR(MESSAGE)                                                    \
@@ -53,6 +52,41 @@
 static const char kStatus[] = "status";
 static const char kSuccess[] = "success";
 static const char kFailure[] = "failure";
+
+using cb_t = nfs_metrics_update_cb_t;
+
+static std::shared_ptr<std::vector<cb_t>> g_callbacks;
+static constexpr std::size_t kMaxCallbacks = 64; 
+
+extern "C" void nfs_register_metrics_collector(nfs_metrics_update_cb_t cb) {
+
+  if (!cb) return;
+
+  for (;;) {
+   auto cur = std::atomic_load_explicit(&g_callbacks, std::memory_order_acquire);
+  // Fast-path: if already present, succeed without changing the snapshot.
+    if (std::find(cur->begin(), cur->end(), cb) != cur->end()) {
+      return;  // already registered
+    }   
+
+    // Copy-on-write
+    auto next = std::make_shared<std::vector<cb_t>>(*cur);
+    if (next->size() >= kMaxCallbacks) {
+      return ;  // capacity exceeded (tune kMaxCallbacks if needed)
+    }   
+    next->push_back(cb);
+
+    if (std::atomic_compare_exchange_weak_explicit(
+            &g_callbacks, &cur, next,
+            std::memory_order_release, std::memory_order_acquire)) {
+
+
+    return;
+    }   
+        }
+
+
+}
 
 namespace ganesha_monitoring
 {
@@ -254,6 +288,26 @@ void PrometheusExposer::stop()
 	}
 }
 
+void nfs_metrics_collect_now(void) {
+
+//  auto snapshot = g_callbacks.load(std::memory_order_acquire);
+   auto snapshot = std::atomic_load_explicit(&g_callbacks, std::memory_order_acquire);
+
+// Iterate in registration order
+  for (auto &fn : *snapshot) {
+    if (fn) {
+      // Ensure no exceptions escape C boundary; also protects
+      // metrics path from accidental throw in any one callback.
+      try {
+        fn();
+      } catch (...) {
+        // If you have a logging macro available here, log the failure.
+        // e.g., LogWarn(COMPONENT_MONITORING, "export info callback threw");
+      }
+    }
+  }
+}
+
 static inline uint64_t now_mono_ns(void)
 {
 	struct timespec ts;
@@ -289,6 +343,7 @@ void *PrometheusExposer::server_thread(void *arg)
 		const uint64_t start_time = now_mono_ns();
 		recv(client_fd, buffer, sizeof(buffer), 0);
 
+		nfs_metrics_collect_now();
 		auto families = exposer->registry_.Collect();
 		for (auto &family : families) {
 			compact_family(family);
@@ -296,7 +351,10 @@ void *PrometheusExposer::server_thread(void *arg)
 
 		SocketStreambuf<> socket_streambuf(client_fd);
 		std::ostream socket_ostream(&socket_streambuf);
-		socket_ostream << "HTTP/1.1 200 OK\r\n\r\n";
+		socket_ostream << "HTTP/1.1 200 OK\r\n";
+		socket_ostream
+			<< "Content-Type: text/plain; version=0.0.4; charset=utf-8\r\n";
+		socket_ostream << "\r\n";
 		prometheus::TextSerializer::Serialize(socket_ostream, families);
 		socket_ostream.flush();
 
@@ -309,11 +367,13 @@ void *PrometheusExposer::server_thread(void *arg)
 			exposer->successLatencies_.Observe(elapsed_ms);
 
 #ifdef HAVE_PROCPS
-		update_mem_info();
+			update_mem_info();
 #endif
 	}
 	return NULL;
 }
+
+
 
 extern "C" {
 
@@ -359,6 +419,21 @@ void update_mem_info()
 		dynamic_metrics__mem_info(proc_info);
 }
 #endif
+
+
+
+// Ensure a non-null, empty vector by default for readers.
+struct CallbacksInit {
+  CallbacksInit() {
+    std::atomic_store_explicit(
+        &g_callbacks,
+        std::make_shared<std::vector<cb_t>>(),
+        std::memory_order_release);
+  }
+} g_callbacks_init;
+
+
+
 
 } /* extern "C" */
 

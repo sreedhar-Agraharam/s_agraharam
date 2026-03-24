@@ -42,6 +42,13 @@
 #include "nfs4_acls.h"
 #include "idmapper.h"
 #include "export_mgr.h"
+#ifdef USE_MONITORING
+#include "nfs_metrics.h"
+#include "prometheus_exposer.h"
+#include "dynamic_metrics.h"
+#endif
+
+
 
 /* Define mapping of NFS4 who name and type. */
 static struct {
@@ -62,6 +69,14 @@ static struct {
 	},
 };
 
+
+typedef struct metrics
+{
+	char *path;
+	fsal_dynamicfsinfo_t dyn;
+
+}dyn;
+static dyn check;
 #ifdef _USE_NFS3
 /**
  * Converts FSAL Attributes to NFSv3 PostOp Attributes structure.
@@ -1145,6 +1160,25 @@ static fattr_xdr_result decode_fileid(XDR *xdr, struct xdr_attrs_args *args)
 	return FATTR_XDR_SUCCESS;
 }
 
+
+#ifdef USE_MONITORING
+void update_metrics(void)
+{
+	LogFullDebug(COMPONENT_FSAL,"I am in update_metrics");
+		dynamic_metrics_export_info(check.path,check.dyn.total_bytes,check.dyn.avail_bytes,check.dyn.total_files,check.dyn.avail_files);
+
+}
+
+/* Call this once during daemon startup, after monitoring is initialized. */
+void monitoring_register_hooks(void)
+{
+    LogFullDebug(COMPONENT_FSAL, "i entered hooks register");
+//    ganesha_register_export_info_collector(update_metrics);
+	nfs_register_metrics_collector(update_metrics);
+}
+
+#endif /* USE_MONITORING */
+
 /*
  * Dynamic file system info
  */
@@ -1152,10 +1186,12 @@ static fattr_xdr_result decode_fileid(XDR *xdr, struct xdr_attrs_args *args)
 static fattr_xdr_result encode_fetch_fsinfo(struct xdr_attrs_args *args)
 {
 	fsal_status_t fsal_status = { 0, 0 };
-
+	LogFullDebug(COMPONENT_FSAL,"Hurray");
 	if (args->data != NULL && args->data->current_obj != NULL) {
 		fsal_status = fsal_statfs(args->data->current_obj,
 					  &args->dynamicinfo);
+		check.path = op_ctx_export_path(op_ctx);;
+		check.dyn = args->dynamicinfo;	
 	} else {
 		/* We don't expect this to actually get used, but fill in
 		 * sensible values just as a precaution.
@@ -4826,51 +4862,19 @@ int nfs4_Fattr_To_fsinfo(fsal_dynamicfsinfo_t *dinfo, fattr4 *Fattr)
  * @brief: is a directory's sticky bit set?
  *
  */
-bool is_sticky_bit_set(struct fsal_obj_handle *obj)
+bool is_sticky_bit_set(struct fsal_obj_handle *obj,
+		       const struct fsal_attrlist *attr)
 {
-	struct fsal_attrlist attrs;
-	fsal_prepare_attrs(&attrs, ATTR_MODE | ATTR_OWNER | ATTR_TYPE);
-	fsal_status_t status = { ERR_FSAL_NO_ERROR, 0 };
-
-	status = obj->obj_ops->getattrs(obj, &attrs);
-
-	if (FSAL_IS_ERROR(status)) {
-		/* Drop the message level to debug if referral belongs
-                         * to deleted file to avoid flood of messages.
-                         */
-		if (status.major == ERR_FSAL_STALE) {
-			LogDebug(
-				COMPONENT_FSAL,
-				"Failed to get attrs for referral, handle: %p (probably deleted), valid_mask: %" PRIx64
-				", request_mask: %" PRIx64
-				", supported: %" PRIx64 ", error: %s",
-				obj, attrs.valid_mask, attrs.request_mask,
-				attrs.supported, fsal_err_txt(status));
-		} else {
-			LogEventLimited(
-				COMPONENT_FSAL,
-				"Failed to get attrs for referral, handle: %p, valid_mask: %" PRIx64
-				", request_mask: %" PRIx64
-				", supported: %" PRIx64 ", error: %s",
-				obj, attrs.valid_mask, attrs.request_mask,
-				attrs.supported, fsal_err_txt(status));
-		}
+	if (attr->mode & (S_IXUSR | S_IXGRP | S_IXOTH))
 		return false;
-	}
-	LogDebug(
-		COMPONENT_NFSPROTO,
-		"Checking attrs for sticky_bit property, handle: %p, valid_mask: %" PRIx64
-		", request_mask: %" PRIx64 ", supported: %" PRIx64,
-		obj, attrs.valid_mask, attrs.request_mask, attrs.supported);
 
-	if ((attrs.mode & S_ISVTX) &&
-	    (attrs.owner != op_ctx->creds.caller_uid)) {
-		LogDebug(COMPONENT_NFS_V4, "Sticky Bit SET on %" PRIi64,
-			 obj->fileid);
-		return true;
-	}
+	if (!(attr->mode & S_ISVTX))
+		return false;
 
-	return false;
+	LogDebug(COMPONENT_NFS_V4, "sticky bit is set on %" PRIi64,
+		 obj->fileid);
+
+	return true;
 }
 
 #define COMPOUND_EXTRA_ROOM 4096
