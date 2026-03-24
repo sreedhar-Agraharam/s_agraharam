@@ -140,4 +140,8 @@ add_dependencies(nfs4callbacks gsh_trace_header_generate)
 include("${CMAKE_BINARY_DIR}/gsh_lttng_generation_file_properties.cmake")
 endif (USE_LTTNG)
 
+if (USE_MONITORING)
+add_dependencies(nfsproto ganesha_monitoring)
+target_link_libraries(nfsproto PRIVATE ganesha_monitoring)
+endif(USE_MONITORING)
 ########### install files ###############

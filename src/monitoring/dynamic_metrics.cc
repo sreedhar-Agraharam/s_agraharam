@@ -30,7 +30,7 @@
 #include <shared_mutex>
 
 #include "dynamic_metrics.h"
-
+#include <sys/sysinfo.h>
 #ifdef USE_MONITORING
 
 #include "prometheus/counter.h"
@@ -53,6 +53,8 @@ namespace ganesha_monitoring
 
 using CounterInt = prometheus::Counter<int64_t>;
 using GaugeInt = prometheus::Gauge<int64_t>;
+using GaugeDouble = prometheus::Gauge<double>;
+
 using HistogramInt = prometheus::Histogram<int64_t>;
 using HistogramDouble = prometheus::Histogram<double>;
 using LabelsMap = std::map<const std::string, const std::string>;
@@ -97,7 +99,12 @@ class DynamicMetrics {
 	GaugeInt::Family &exporttotalsize;
 	GaugeInt::Family &exportavailablesize;
 	GaugeInt::Family &exportfilescount;
-	
+	GaugeDouble::Family &exportfreebytespercent;
+	GaugeDouble::Family &exportinodeutilization;
+	GaugeDouble::Family &memoryrss;
+	GaugeDouble::Family &memoryvirtualsize;
+	GaugeDouble::Family &memoryswapsize;
+	GaugeDouble::Family &cpuutilization;
 
 	// Per {operation} NFS request metrics.
 	CounterInt::Family &requestsTotalByOperation;
@@ -181,18 +188,50 @@ DynamicMetrics::DynamicMetrics(prometheus::Registry &registry)
 				   .Help("Last update timestamp, per client.")
 				   .Register(registry))
 	, exporttotalsize(prometheus::Builder<GaugeInt>()
-				   .Name("export_total_size")
-				   .Help("Storage size of the export id")
-				   .Register(registry))
-	, exportavailablesize(prometheus::Builder<GaugeInt>()
-				   .Name("export_available_size")
-				   .Help("exports free size available")
-				   .Register(registry))
+				  .Name("export_total_size")
+				  .Help("Storage size of the export id (Bytes)")
+				  .Register(registry))
+	, exportavailablesize(
+		  prometheus::Builder<GaugeInt>()
+			  .Name("export_available_size")
+			  .Help("exports free size available (Bytes)")
+			  .Register(registry))
 	, exportfilescount(prometheus::Builder<GaugeInt>()
-				   .Name("export_file_count")
+				   .Name("export_available_file_count")
 				   .Help("Files present in the export")
 				   .Register(registry))
+	, exportfreebytespercent(
+		  prometheus::Builder<GaugeDouble>()
+			  .Name("export_free_bytes_percent")
+			  .Help("Exports storage utilization percentage")
+			  .Register(registry))
+	, exportinodeutilization(
+		  prometheus::Builder<GaugeDouble>()
+			  .Name("export_inode_utilization")
+			  .Help("Exports Files utilzation percentage")
+			  .Register(registry))
+	, memoryrss(
+		  prometheus::BuildGauge()
+			  .Name("nfs_memory_resident_ram_size")
+			  .Help("Phyical RAM size utilizaed by ganesha Units: MB")
+			  .Register(registry))
+	, memoryvirtualsize(
+		  prometheus::BuildGauge()
+			  .Name("nfs_virtual_ram_size")
+			  .Help("Virtual RAM size utilized by ganesha Units: GB")
+			  .Register(registry))
+	, memoryswapsize(
+		  prometheus::BuildGauge()
+			  .Name("nfs_memory_swap_size")
+			  .Help("swap size utilized by ganesha Units: KB")
+			  .Register(registry))
+	, cpuutilization(
+		  prometheus::BuildGauge()
+			  .Name("nfs_cpu_utilization")
+			  .Help("cpu utilized by ganesha Units: percentage")
+			  .Register(registry))
 	,
+
 	// Per {operation} NFS request metrics.
 	requestsTotalByOperation(prometheus::Builder<CounterInt>()
 					 .Name("nfs_requests_total")
@@ -263,14 +302,14 @@ static std::string trimIPv6Prefix(const std::string input)
 	if (input.find(prefix) == 0) {
 		return input.substr(prefix.size());
 	}
-	return input;
+	return std::move(input);
 }
 
 // SimpleMap is a simple thread-safe wrapper of std::map.
 template <class K, class T = std::string> class SimpleMap {
     public:
 	SimpleMap(std::function<T(const K &k)> get_value)
-		: get_value_(get_value)
+		: get_value_(std::move(get_value))
 	{
 	}
 
@@ -403,7 +442,7 @@ void dynamic_metrics__observe_nfs_request(
 
 void dynamic_metrics__observe_nfs_io(size_t bytes_requested,
 				     size_t bytes_transferred, bool is_write,
-				     export_id_t export_id,
+				     export_id_t export_id, const char *path,
 				     const char *client_ip)
 {
 	if (!dynamic_metrics)
@@ -444,17 +483,25 @@ void dynamic_metrics__observe_nfs_io(size_t bytes_requested,
 	// Observe by export metrics.
 	const std::string exportLabel = GetExportLabel(export_id);
 	dynamic_metrics->bytesReceivedTotalByOperationExport
-		.Add({ { kOperation, operation }, { kExport, exportLabel } })
+		.Add({ { kOperation, operation },
+		       { kExport, exportLabel },
+		       { kExportpath, path } })
 		.Increment(bytes_received);
 	dynamic_metrics->bytesSentTotalByOperationExport
-		.Add({ { kOperation, operation }, { kExport, exportLabel } })
+		.Add({ { kOperation, operation },
+		       { kExport, exportLabel },
+		       { kExportpath, path } })
 		.Increment(bytes_sent);
 	dynamic_metrics->requestSizeByOperationExport
-		.Add({ { kOperation, operation }, { kExport, exportLabel } },
+		.Add({ { kOperation, operation },
+		       { kExport, exportLabel },
+		       { kExportpath, path } },
 		     requestSizeBuckets)
 		.Observe(bytes_requested);
 	dynamic_metrics->responseSizeByOperationExport
-		.Add({ { kOperation, operation }, { kExport, exportLabel } },
+		.Add({ { kOperation, operation },
+		       { kExport, exportLabel },
+		       { kExportpath, path } },
 		     requestSizeBuckets)
 		.Observe(bytes_sent);
 }
@@ -492,12 +539,61 @@ void dynamic_metrics__mdcache_cache_miss(const char *operation,
 	}
 }
 
-void dynamic_metrics_export_info(const uint64_t total_size, const uint64_t avail_size, const uint64_t total_files )
+void dynamic_metrics_export_info(const char *path, const uint64_t total_size,
+				 const uint64_t avail_size,
+				 const uint64_t total_files,
+				 const uint64_t avail_files)
 {
-	dynamic_metrics->exporttotalsize.Add({}).Set(total_size);
-	dynamic_metrics->exportavailablesize.Add({}).Set(avail_size);
-	dynamic_metrics->exportfilescount.Add({}).Set(total_files);
+	if (total_size && avail_files) {
+		uint32_t storage_utilization =
+			((double)avail_size / total_size) * 100;
+		uint32_t files_utilization =
+			((double)(total_files - avail_files) / avail_files) *
+			100;
+
+		dynamic_metrics->exporttotalsize.Add({ { kExportpath, path } })
+			.Set(total_size);
+		dynamic_metrics->exportavailablesize
+			.Add({ { kExportpath, path } })
+			.Set(avail_size);
+		dynamic_metrics->exportfilescount.Add({ { kExportpath, path } })
+			.Set(avail_files);
+		dynamic_metrics->exportfreebytespercent
+			.Add({ { kExportpath, path } })
+			.Set(storage_utilization);
+		dynamic_metrics->exportinodeutilization
+			.Add({ { kExportpath, path } })
+			.Set(files_utilization);
+	}
 }
+
+#ifdef HAVE_PROCPS
+void dynamic_metrics__mem_info(proc_t proc_info)
+{
+	const double rss = (double)proc_info.vm_rss / 1024;
+	const double virtual_size = (double)proc_info.vm_size / (1024 * 1024);
+	const double swap_size = proc_info.vm_swap;
+	struct sysinfo info;
+	dynamic_metrics->memoryrss.Add({}).Set(rss);
+	dynamic_metrics->memoryvirtualsize.Add({}).Set(virtual_size);
+	dynamic_metrics->memoryswapsize.Add({}).Set(swap_size);
+	if (sysinfo(&info) == 0) {
+		long clk_tck = sysconf(_SC_CLK_TCK);
+		int num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+		double system_uptime = info.uptime;
+		double cpu_time =
+			(proc_info.utime + proc_info.stime) / (double)clk_tck;
+		double process_time =
+			system_uptime - (proc_info.start_time / clk_tck);
+		if (process_time > 0) {
+			double utilizaiton =
+				(cpu_time / process_time) * 100.0 / num_cpus;
+			dynamic_metrics->cpuutilization.Add({}).Set(
+				utilizaiton);
+		}
+	}
+}
+#endif
 
 } // extern "C"
 

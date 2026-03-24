@@ -364,6 +364,7 @@ void nfs_metrics__nfs4_request(uint32_t op, nsecs_elapsed_t request_time,
 
 void nfs_metrics__init(void)
 {
+	monitoring_register_hooks();
 	register_rpcs_metrics();
 	register_nfsv4_operations_metrics();
 	register_dropped_gss_requests_count_metric();

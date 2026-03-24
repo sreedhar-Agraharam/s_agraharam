@@ -64,6 +64,11 @@
 #include "nfs_convert.h"
 #include "nfs_metrics.h"
 
+#ifdef USE_MONITORING
+#include "monitoring_hooks.h"
+#include "dynamic_metrics.h"
+#endif
+
 #define NFS_pcp nfs_param.core_param
 #define NFS_program NFS_pcp.program
 
@@ -548,6 +553,11 @@ static struct _9p_stats *get_9p(struct gsh_stats *stats, pthread_rwlock_t *lock)
 	return stats->_9p;
 }
 #endif
+
+
+
+
+
 
 /* Functions for recording statistics
  */
