@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 SET(ganesha_monitoring_SRCS
   prometheus_exposer.cc
   dynamic_metrics.cc
+  monitoring_hooks.cc
 )
 
 add_library(ganesha_monitoring SHARED ${ganesha_monitoring_SRCS})

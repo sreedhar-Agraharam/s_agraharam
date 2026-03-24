@@ -46,6 +46,7 @@ void nfs_metrics__rpc_completed(void);
 void nfs_metrics__rpcs_in_flight(int64_t value);
 void nfs_metrics__init(void);
 
+extern void monitoring_register_hooks(void);
 /*
  * The following two functions generate the following dynamic metrics,
  * exported both as total and per export.

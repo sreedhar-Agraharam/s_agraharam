@@ -43,8 +43,8 @@
  *  - https://prometheus.io/docs/concepts/metric_types/
  */
 
-#ifndef GANESHA_DYNAMIC_METRICS_H
-#define GANESHA_DYNAMIC_METRICS_H
+#ifndef MONITOR_DYNAMIC_METRICS_H
+#define MONITOR_DYNAMIC_METRICS_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -54,6 +54,11 @@
 #include "config.h"
 #include "gsh_types.h"
 #include "monitoring.h"
+
+#ifdef HAVE_PROCPS
+#include <proc/readproc.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -85,7 +90,7 @@ void dynamic_metrics__observe_nfs_request(
 
 void dynamic_metrics__observe_nfs_io(size_t bytes_requested,
 				     size_t bytes_transferred, bool is_write,
-				     export_id_t export_id,
+				     export_id_t export_id, const char *path,
 				     const char *client_ip);
 
 /* MDCache hit rates. */
@@ -94,7 +99,15 @@ void dynamic_metrics__mdcache_cache_hit(const char *operation,
 void dynamic_metrics__mdcache_cache_miss(const char *operation,
 					 export_id_t export_id);
 
-void dynamic_metrics_export_info(const uint64_t total_size, const uint64_t avail_size, const uint64_t total_files );
+void dynamic_metrics_export_info(const char *path, const uint64_t total_size,
+				 const uint64_t avail_size,
+				 const uint64_t total_files,
+				 const uint64_t avail_files);
+
+#ifdef HAVE_PROCPS
+void dynamic_metrics__mem_info(proc_t proc_info);
+#endif
+
 #else /* USE_MONITORING */
 
 #ifndef UNUSED
@@ -118,7 +131,7 @@ static inline void dynamic_metrics__observe_nfs_request(
 static inline void dynamic_metrics__observe_nfs_io(
 	size_t UNUSED(bytes_requested), size_t UNUSED(bytes_transferred),
 	bool UNUSED(is_write), export_id_t UNUSED(export_id),
-	const char *UNUSED(client_ip))
+	const char *UNUSED(path), const char *UNUSED(client_ip))
 {
 }
 
@@ -132,9 +145,19 @@ static inline void dynamic_metrics__mdcache_cache_miss(
 {
 }
 
-static inline void dynamic_export_info(const uint64_t UNUSED(total_size), const uint64_t UNUSED(avail_size), const uint64_t UNUSED(total_files))
+static inline void dynamic_export_info(const char *UNSED(path),
+				       const uint64_t UNUSED(total_size),
+				       const uint64_t UNUSED(avail_size),
+				       const uint64_t UNUSED(total_files),
+				       const uint64_t UNUSED(avail_files))
 {
 }
+
+#ifdef HAVE_PROCPS
+static inline void dynamic_metrics__mem_info(proc_t *UNUSED(proc_info))
+{
+}
+#endif
 
 #endif /* USE_MONITORING */
 

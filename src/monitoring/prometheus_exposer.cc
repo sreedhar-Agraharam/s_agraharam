@@ -41,7 +41,7 @@
 
 #include "prometheus_exposer.h"
 #include "dynamic_metrics.h"
-
+#include "monitoring_hooks.h"
 #ifdef USE_MONITORING
 
 #define PERROR(MESSAGE)                                                    \
@@ -289,6 +289,7 @@ void *PrometheusExposer::server_thread(void *arg)
 		const uint64_t start_time = now_mono_ns();
 		recv(client_fd, buffer, sizeof(buffer), 0);
 
+		nfs_metrics_collect_now();
 		auto families = exposer->registry_.Collect();
 		for (auto &family : families) {
 			compact_family(family);
@@ -296,7 +297,10 @@ void *PrometheusExposer::server_thread(void *arg)
 
 		SocketStreambuf<> socket_streambuf(client_fd);
 		std::ostream socket_ostream(&socket_streambuf);
-		socket_ostream << "HTTP/1.1 200 OK\r\n\r\n";
+		socket_ostream << "HTTP/1.1 200 OK\r\n";
+		socket_ostream
+			<< "Content-Type: text/plain; version=0.0.4; charset=utf-8\r\n";
+		socket_ostream << "\r\n";
 		prometheus::TextSerializer::Serialize(socket_ostream, families);
 		socket_ostream.flush();
 
@@ -309,7 +313,7 @@ void *PrometheusExposer::server_thread(void *arg)
 			exposer->successLatencies_.Observe(elapsed_ms);
 
 #ifdef HAVE_PROCPS
-		update_mem_info();
+			update_mem_info();
 #endif
 	}
 	return NULL;
