@@ -1,7 +1,8 @@
 {
+
   "__inputs": [
     {
-      "name": "Prometheus",
+      "name": "datasource",
       "label": "Prometheus",
       "description": "",
       "type": "datasource",
@@ -9,3462 +10,2658 @@
       "pluginName": "Prometheus"
     }
   ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": "$datasource",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
-  "links": [],
-  "panels": [
-
-    {
-  "type": "timeseries",
-  "title": "Rate of MD Cache Hits",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 1,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(mdcache_cache_hits_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "datasource": "ganesha_dashboard",
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  }
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of MD Cache Misses Total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 3,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(mdcache_cache_misses_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  }
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of mdcache cache hits by export",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 4,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(mdcache_cache_hits_by_export_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "transparent": true,
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of cache hits in the metadata cache for a specific NFS export.\n  :Labels: export_id , operation( getattr, lookup).\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of mdcache cache misses by export",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 5,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(mdcache_cache_misses_by_export_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of cache misses in the metadata cache for a specific NFS export.\n  :Labels: export_id, operation(getattr, lookup)\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of rpcs received total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 6,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(rpcs_received_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate  of total RPCs received.\n  :Labels: None\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of rpcs completed total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 7,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(rpcs_completed_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of  RPCs completed.\n  :Labels: None\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of nfs errors total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 8,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_errors_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of Error count by version, operation, and status. Useful for identifying specific failing operations.\n  \n  :Labels: ``version``, ``operation``, ``status``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of client requests total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 9,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(client_requests_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of Clients request operations total.\n\n  :Labels: client, operation\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of client bytes received total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 10,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(client_bytes_received_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of  bytes received by every client based on operations\n  :Labels: ``client``, ``operation``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of client bytes sent total to server",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 12,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(client_bytes_sent_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of total  bytes sent by clients to server  based on operations.\n\n  :Labels: ``client``, ``operation``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of nfs requests total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 13,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_requests_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Ratio of total no.of requests occured.\n\n  :Labels: ``operation``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of nfs bytes sent total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 15,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_bytes_sent_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of total bytes received by nfs service\n\n  :Labels: ``operation``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of total nfs requests by export",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 2,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_requests_by_export_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of Total nfs request of individual exports\n\n  :Labels: ``export_id``,``operation``,``path``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of total nfs bytes received by export",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 3,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_bytes_received_by_export_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of  total number of bytes received by the NFS-Ganesha server, categorized by export.\n  \n  :Labels: ``export_id``\n  :Type: Counter"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of total nfs bytes sent by export ",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 4,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(nfs_bytes_sent_by_export_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "pluginVersion": "10.2.6",
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "description": "  Rate of Total number of bytes sent by the NFS-Ganesha server for each export.\n  \n  :Labels: ``export_id``\n  :Type: Counter"
-},
-
-{
-  "type": "stat",
-  "title": "xprt per custom data status count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 5,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "xprt__per_custom_data_status_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto",
-    "text": {
-      "titleSize": 13,
-      "valueSize": 100
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Total number of transport instances per custom data status.\n  \n  :Labels: None\n  :Type: Counter"
-},
-
-{
-  "datasource": "ganesha_dashboard",
-  "type": "stat",
-  "title": "clients per state protection count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "id": 6,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "clients__per_state_protection_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto",
-    "text": {
-      "titleSize": 20,
-      "valueSize": 100
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Number of clients for each state-protection type.\n  \n  :Labels: None\n  :Type: Counter"
-},
-
-{
-  "type": "stat",
-  "title": "clients lease expire count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 7,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "clients__lease_expire_count",
-      "range": true,
-      "instant": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "d59df3fd-f069-47db-8471-58785398e9a1"
-      },
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto"
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Total number of client lease expired events.\n\n  :Labels: ``client_id`` , ``operation``\n  :Type: Counter"
-},
-
-{
-  "type": "stat",
-  "title": "session denied xprt associations count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 8,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "session__denied_xprt_associations_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto"
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Total number of denied session-and-xprt associations across sessions.\n  \n  :Labels: None\n  :Type: Counter"
-},
-
-{
-  "type": "stat",
-  "title": "nfs v4 op count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 9,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "nfsv4__op_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto",
-    "text": {
-      "titleSize": 10,
-      "valueSize": 40
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Number of NFSv4 operations.\n  \n  :Labels: ``operation`` , ``status``\n  :Type: Counter"
-},
-
-{
-  "type": "stat",
-  "title": "nfs v4 dropped gss requests count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 10,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "nfsv4__dropped_gss_requests_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "description": "  Number of dropped rpcsec_gss requests.\n  \n  :Labels: None\n  :Type: Counter",
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto"
-  },
-  "pluginVersion": "10.2.6"
-},
-
-{
-  "type": "timeseries",
-  "title": "Rate of total idmapping cache uses",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 11,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rate(idmapping__cache_uses_total[$__rate_interval])",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": false
-    }
-  ],
-  "options": {
-    "tooltip": {
-      "mode": "single",
-      "sort": "none"
-    },
-    "legend": {
-      "showLegend": true,
-      "displayMode": "list",
-      "placement": "bottom",
-      "calcs": []
-    }
-  },
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "drawStyle": "line",
-        "lineInterpolation": "linear",
-        "barAlignment": 0,
-        "lineWidth": 1,
-        "fillOpacity": 0,
-        "gradientMode": "none",
-        "spanNulls": false,
-        "insertNulls": false,
-        "showPoints": "auto",
-        "pointSize": 5,
-        "stacking": {
-          "mode": "none",
-          "group": "A"
-        },
-        "axisPlacement": "auto",
-        "axisLabel": "",
-        "axisColorMode": "text",
-        "axisBorderShow": false,
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "axisCenteredZero": false,
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        },
-        "thresholdsStyle": {
-          "mode": "off"
-        }
-      },
-      "color": {
-        "mode": "palette-classic"
-      },
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      }
-    },
-    "overrides": []
-  },
-  "description": "Rate of  total number of uses of the ID mapping cache.\n  \n  :Labels: ``cache`` ``hit``\n  :Type: Counter"
-},
-
-{
-  "type": "gauge",
-  "title": "RPC's in Flight",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 12,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "rpcs_in_flight",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "showThresholdLabels": false,
-    "showThresholdMarkers": true,
-    "sizing": "auto",
-    "minVizWidth": 75,
-    "minVizHeight": 75
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Number of NFS requests currently being processed or in flight.\n  \n  :Labels: None\n  :Type: Gauge"
-},
-
-{
-  "type": "gauge",
-  "title": "clients confirmed count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 13,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "clients__confirmed_count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "description": "  Total number of confirmed clients.\n  \n  :Labels: None\n  :Type: Gauge",
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "showThresholdLabels": false,
-    "showThresholdMarkers": true,
-    "sizing": "auto",
-    "minVizWidth": 75,
-    "minVizHeight": 75
-  },
-  "pluginVersion": "10.2.6"
-},
-
-{
-  "type": "stat",
-  "title": "last client update",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 14,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "last_client_update",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "description": "  Timestamp of the last update made by a client.\n  \n  :Labels: ``client_id``\n  :Type: Gauge",
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto"
-  },
-  "pluginVersion": "10.2.6"
-},
-
-{
-  "type": "stat",
-  "title": "locks count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 15,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "locks__count",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
-          },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "textMode": "auto",
-    "wideLayout": true,
-    "colorMode": "value",
-    "graphMode": "area",
-    "justifyMode": "auto"
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Total number of locks for each lock type.\n  \n  :Labels: ``lock_type``\n  :Type: Gauge"
-},
-
-
-{
-  "type": "heatmap",
-  "title": "nfs request size bytes bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 21,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_request_size_bytes_bucket{operation=\"write\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    },
-    {
-      "refId": "B",
-      "expr": "round(sum by(le) (increase(nfs_request_size_bytes_bucket{operation=\"read\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "hide": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Size of NFS requests received by the server.\n  \n  :Labels: ``operation``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs response size bytes",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
   "id": 22,
-  "targets": [
+  "links": [],
+  "liveNow": false,
+  "panels": [
     {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_response_size_bytes_bucket{operation=\"read\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    },
-    {
-      "refId": "B",
-      "expr": "round(sum by(le) (increase(nfs_response_size_bytes_bucket{operation=\"write\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "hide": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Size of responses sent by the NFS server.\n  \n  :Labels: ``operation``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs latency ms bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 23,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_latency_ms_bucket{operation=\"open\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Latency of NFS operations, measured in milliseconds.\n  \n  :Labels: ``operation``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs request size by export bytes",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 24,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_request_size_by_export_bytes_bucket{operation=\"read\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Size of NFS requests in bytes, broken down by individual exports.\n  \n  :Labels: ``export_id``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs response size by export bytes bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 25,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_response_size_by_export_bytes_bucket{operation=\"read\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Size of NFS responses in bytes, categorized by individual exports.\n  \n  :Labels: ``export_id``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs latency ms by export",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 26,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfs_latency_ms_by_export_bucket{operation=\"read\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Latency of NFS operations, broken down by export.\n  \n  :Labels: ``export_id``, ``operation``\n  :Type: Histogram"
-},
-
-{
-  "datasource": "ganesha_dashboard",
-  "type": "bargauge",
-  "title": "xprt sessions count bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "id": 27,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "xprt__sessions_count_bucket",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "displayMode": "gradient",
-    "valueMode": "color",
-    "namePlacement": "auto",
-    "showUnfilled": true,
-    "sizing": "auto",
-    "minVizWidth": 8,
-    "minVizHeight": 16,
-    "maxVizHeight": 300
-  },
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 35,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
           },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Distribution of sessions per transport.\n  \n  :Labels: None\n  :Type: Histogram"
-},
-
-{
-  "type": "bargauge",
-  "title": "session connections count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 28,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "session__connections_count_bucket",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 1
           },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "displayMode": "gradient",
-    "valueMode": "color",
-    "namePlacement": "auto",
-    "showUnfilled": true,
-    "sizing": "auto",
-    "minVizWidth": 8,
-    "minVizHeight": 16,
-    "maxVizHeight": 300
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Distribution of number of session-connections across session.\n  \n  :Labels: None\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "nfs v4 op latency",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 29,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(nfsv4__op_latency_bucket{op=\"ACCESS\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "pluginVersion": "10.2.6",
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "description": "  Time taken for each operation type and status.\n  \n  :Labels: None\n  :Type: Histogram"
-},
-
-{
-  "datasource": "ganesha_dashboard",
-  "type": "bargauge",
-  "title": "compound ops count",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "id": 30,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "compound__ops_count_bucket",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
-      ],
-      "fields": ""
-    },
-    "orientation": "auto",
-    "displayMode": "gradient",
-    "valueMode": "color",
-    "namePlacement": "auto",
-    "showUnfilled": true,
-    "sizing": "auto",
-    "minVizWidth": 8,
-    "minVizHeight": 16,
-    "maxVizHeight": 300
-  },
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "color": "green",
-            "value": null
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "pluginVersion": "10.2.6",
-  "description": "Number of operations in a compound request.\n  \n  :Labels: None\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "compound latency bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 31,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(compound__latency_bucket{status=\"NFS4_OK\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Time taken for entire compound operations.\n  \n  :Labels: ``status``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "connection manager connection started latencies bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 32,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(connection_manager__connection_started_latencies_bucket{result=\"ALLOW\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Connection Manager Connection Started Latencies per Result.\n  \n  :Labels: ``result``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "connection manager drain local client latencies bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 33,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(connection_manager__drain_local_client_latencies_bucket{result=\"STUCK\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Time taken to drain local client connections.\n  \n  :Labels: ``result``\n  :Type: Histogram"
-},
-
-{
-  "type": "bargauge",
-  "title": "idmapping user groups total",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 34,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "idmapping__user_groups_total_bucket",
-      "range": true,
-      "instant": false,
-      "editorMode": "builder",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "mappings": [],
-      "thresholds": {
-        "mode": "absolute",
-        "steps": [
-          {
-            "value": null,
-            "color": "green"
+          "id": 86,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 15
+            },
+            "textMode": "name",
+            "wideLayout": true
           },
-          {
-            "value": 80,
-            "color": "red"
-          }
-        ]
-      },
-      "color": {
-        "mode": "thresholds"
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "reduceOptions": {
-      "values": false,
-      "calcs": [
-        "lastNotNull"
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "ganesha_build_info",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "NFS INFO",
+          "type": "stat"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows CPU utilization of the NFS-Ganesha process over time (percentage).\nThis panel helps correlate spikes in CPU usage with increased request rate, latency, thread saturation, or cache misses.\nUse it to detect CPU bottlenecks (e.g., sustained high CPU) that can drive higher tail latencies and lower throughput.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 1
+          },
+          "id": 83,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "nfs_cpu_utilization",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "“NFS-Ganesha CPU Utilization (%)",
+          "type": "gauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows how much of the NFS-Ganesha thread pool is currently being used, expressed as a percentage.\nCalculated as: (threads_scheduled ÷ threads_schedulable) × 100.\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 1
+          },
+          "id": 85,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "Threads_currently_scheduled",
+              "fullMetaSearch": false,
+              "hide": true,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            },
+            {
+              "datasource": "$datasource",
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "threads_schedulable",
+              "fullMetaSearch": false,
+              "hide": true,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "($A/$B)*100",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Thread Utilization (%)",
+          "type": "gauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the current number of NFS RPC requests actively being processed (concurrency).\nHigher values indicate increased load or slower processing (requests taking longer to complete).\nUse this to detect saturation: if RPCs in flight stay elevated while throughput flattens or latency rises, the server is likely bottlenecked (CPU, threads, I/O, or contention).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 9
+          },
+          "id": 84,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "rpcs_in_flight",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "RPCs In Flight",
+          "type": "gauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the percentage of metadata lookups served from the Ganesha metadata cache (MDCACHE) instead of requiring backend/FS work.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 9
+          },
+          "id": 66,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum without (instance, job, operation) (rate(mdcache_cache_hits_total[$__rate_interval]))",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum without (instance, job, operation) (rate(mdcache_cache_hits_total[$__rate_interval]))\n+ sum without (instance, job, operation) (rate(mdcache_cache_misses_total[$__rate_interval]))",
+              "hide": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "($A/$B)*100",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Metadata cache hit percentage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "nfs_requests_total is a counter that tracks the total number of NFS requests processed by NFS-Ganesha, split by operation (e.g., read, write, getattr, putfh, etc.).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 9
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "\nsum(rate(nfs_requests_total[$__rate_interval]))\n",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Total request rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the total network traffic handled by NFS-Ganesha on the wire, calculated as the per-second rate of bytes sent plus bytes received (Bytes/s).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 17
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "\nsum without (instance, job, operation) (\n  rate(nfs_bytes_sent_total[$__rate_interval])\n)",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "{{ operation}}",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum without (instance, job, operation) (\n  rate(nfs_bytes_received_total[$__rate_interval])\n)",
+              "hide": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "$A + $B",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Total throughput (Bytes/s)",
+          "type": "timeseries"
+        }
       ],
-      "fields": ""
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Summary",
+      "type": "row"
     },
-    "orientation": "auto",
-    "displayMode": "gradient",
-    "valueMode": "color",
-    "namePlacement": "auto",
-    "showUnfilled": true,
-    "sizing": "auto",
-    "minVizWidth": 8,
-    "minVizHeight": 16,
-    "maxVizHeight": 300
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  Number of groups for a user.\n  \n  :Labels: None\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "idmapping external request latency bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 35,
-  "targets": [
     {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(idmapping__external_request_latency_bucket{op=\"gid_to_group\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 16,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 2
+          },
+          "id": 7,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 50,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_latency_ms_bucket{operation=\"read\", le!=\"+Inf\"}[$__range]))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Read latency distribution",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 2
+          },
+          "id": 22,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 44,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_latency_ms_bucket{operation=\"write\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Write latency distribution",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS GETATTR operation latencies over the selected time range, using Prometheus histogram buckets (nfs_latency_ms_bucket). \nEach bar represents the number of GETATTR requests whose latency fell within a specific bucket range(previous le … current le), derived from cumulative bucket counters and converted into per-bucket counts for visualization.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 10
+          },
+          "id": 74,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 45,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_latency_ms_bucket{operation=\"getattr\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Getattr latency distribution",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS LOOKUP operation latencies over the selected time range using Prometheus histogram buckets (nfs_latency_ms_bucket). \nEach bar represents the number of LOOKUP requests whose latency fell within a specific bucket interval(previous le … current le), derived from cumulative histogram bucket counters and converted into per-bucket counts for visualization.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 10
+          },
+          "id": 75,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 45,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_latency_ms_bucket{operation=\"lookup\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Lookup latency distribution",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS ACCESS operation latencies over the selected time range using Prometheus histogram buckets (nfs_latency_ms_bucket). \nEach bar represents the number of ACCESS requests whose latency fell within a specific bucket interval(previous le … current le), derived from cumulative bucket counters and visualized as per-bucket counts (not cumulative).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 18
+          },
+          "id": 76,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 45,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_latency_ms_bucket{operation=\"access\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Access latency distribution",
+          "type": "bargauge"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Latency distributions",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 14,
+      "panels": [
+        {
+          "gridPos": {
+            "h": 1,
+            "w": 12,
+            "x": 0,
+            "y": 3
+          },
+          "id": 36,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": " ",
+            "mode": "html"
+          },
+          "pluginVersion": "10.2.6",
+          "title": "Reads",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "gridPos": {
+            "h": 1,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "id": 37,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": " ",
+            "mode": "html"
+          },
+          "pluginVersion": "10.2.6",
+          "title": "Writes",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS READ response sizes (Bytes) over the selected time range using Prometheus histogram buckets (nfs_response_size_bytes_bucket). \nEach bar represents the number of read responses whose size fell within a specific bucket interval(previous le … current le), derived from Prometheus cumulative buckets and visualized as per-bucket counts.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "id": 38,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 80,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_response_size_bytes_bucket{operation=\"read\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "NFS read response size heatmap (Bytes)",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS WRITE request sizes (Bytes) over the selected time range using Prometheus histogram buckets (nfs_request_size_bytes_bucket). \nEach bar represents the number of write requests whose payload size fell within a specific bucket interval(previous le … current le), derived from Prometheus cumulative bucket counters and converted into per-bucket counts for visualization.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 4
+          },
+          "id": 39,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 45,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_request_size_bytes_bucket{operation=\"write\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "NFS write request size heatmap (Bytes)",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the distribution of NFS READ request sizes (Bytes) over the selected time range using Prometheus histogram buckets (nfs_request_size_bytes_bucket). \nEach bar represents the number of READ requests whose payload size fell within a specific bucket interval(previous le … current le), derived from Prometheus cumulative histogram buckets and converted into per-bucket counts for visualization.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 12
+          },
+          "id": 31,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 45,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "manual",
+            "text": {
+              "valueSize": 12
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (le) (increase(nfs_request_size_bytes_bucket{operation=\"read\", le!=\"+Inf\"}[$__range]))",
+              "format": "heatmap",
+              "interval": "",
+              "legendFormat": "{{le}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "NFS read request size heatmap (Bytes)",
+          "type": "bargauge"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Request / response sizes",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 78,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "description": "Shows the rate of failed NFS operations per second (errors/s), derived from the nfs_errors_total counter using rate() over a 1‑minute window. \nThe query excludes successful responses by filtering out status values NFS3_OK and NFS4_OK, so only non‑OK statuses contribute to the error rate.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "id": 79,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum(rate(nfs_errors_total{status!~\"NFS3_OK|NFS4_OK\"}[$__rate_interval]))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Errors / second",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 4
+          },
+          "id": 80,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "\nsum without (instance, job, version, operation) (\n  rate(nfs_errors_total{status!~\"NFS3_OK|NFS4_OK\"}[1m])\n)",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum(rate(nfs_errors_total[$__rate_interval]))",
+              "hide": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "($A/$B)*100",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Error rate (%)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 12
+          },
+          "id": 81,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "\nsum(\n  nfs_errors_total{status!~\"NFS3_OK|NFS4_OK\"}\n)\n",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Total error count",
+          "type": "stat"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 53,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 5
+          },
+          "id": 54,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (rate(nfs_requests_by_export_total[$__rate_interval]))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Total request rate per export",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 5
+          },
+          "id": 69,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "\nsum by (export) (\n  rate(mdcache_cache_hits_by_export_total{operation=\"getattr\"}[1m])\n)\n",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (\n  rate(mdcache_cache_hits_by_export_total{operation=\"getattr\"}[1m])\n)\n+\nsum by (export) (\n  rate(mdcache_cache_misses_by_export_total{operation=\"getattr\"}[1m])\n)",
+              "hide": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "$A/$B",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Cache hit ratio per export [ getattr ]",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "Shows the per-export read data throughput in Bytes/s, computed as the per-second rate of cumulative bytes associated with NFS READ activity and grouped by export.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "export_id=12345"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 13
+          },
+          "id": 56,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (rate(nfs_request_size_by_export_bytes_sum{operation=\"read\"}[$__rate_interval]))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Read throughput per export (Bytes/s)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "C export_id=12345"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 13
+          },
+          "id": 71,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (rate(mdcache_cache_hits_by_export_total{operation=\"getattr\"}[1m])) ",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (rate(mdcache_cache_hits_by_export_total{operation=\"getattr\"}[1m]))  + sum by (export) (rate(mdcache_cache_misses_by_export_total{operation=\"getattr\"}[1m]))",
+              "hide": true,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "$A/$B",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Cache hit ratio per export [ lookup ]",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "export_id=12346"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 21
+          },
+          "id": 57,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "sum by (export) (rate(nfs_response_size_by_export_bytes_sum[$__rate_interval]))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Write throughput per export (Bytes/s)",
+          "type": "timeseries"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Per export metrics",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 62,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 6
+          },
+          "id": 58,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "histogram_quantile(\n  0.5,\n  sum by (le, export) (\n    rate(nfs_response_size_by_export_bytes_bucket{operation=\"read\"}[1m])\n  )\n)",
+              "format": "time_series",
+              "interval": "",
+              "legendFormat": "{{export}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Mean (50%) read latency per export",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 6
+          },
+          "id": 60,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "histogram_quantile(\n  0.5,\n  sum by (le, export) (\n    rate(nfs_latency_ms_by_export_bucket[1m])\n  )\n)",
+              "interval": "",
+              "legendFormat": "{{ operation }} {{ export }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Mean (50%) latency per export (all operations)",
+          "type": "bargauge"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 14
+          },
+          "id": 59,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "histogram_quantile(0.9, sum by (le, export) (rate(nfs_response_size_by_export_bytes_bucket{operation=\"read\"}[1m])))",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "90% read latency per export",
+          "type": "bargauge"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Per export latency",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "$datasource",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 10,
+      "panels": [
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 7
+          },
+          "id": 82,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "clients__confirmed_count",
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Active NFS clients",
+          "type": "stat"
+        },
+        {
+          "datasource": "$datasource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "percent"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 7
+          },
+          "id": 29,
+          "options": {
+            "legend": {
+              "calcs": [
+                "last"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.2.6",
+          "targets": [
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "rate(rpcs_completed_total[1m])",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": "$datasource",
+              "editorMode": "code",
+              "expr": "rate(rpcs_received_total[1m])",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+              },
+              "expression": "($A/$B)*100",
+              "hide": false,
+              "refId": "C",
+              "type": "math"
+            }
+          ],
+          "title": "Rate of RPCs completed /received",
+          "type": "timeseries"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": "$datasource",
+          "refId": "A"
+        }
+      ],
+      "title": "Other metrics",
+      "type": "row"
     }
   ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
+  "refresh": "30s",
+  "revision": 1,
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "2026_latest",
+          "value": "a5cb3d14-fc66-4fc5-b938-b4c5786d51b8"
         },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
-    },
-    "overrides": []
+    ]
   },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
+  "time": {
+    "from": "now-5m",
+    "to": "now"
   },
-  "pluginVersion": "10.2.6",
-  "description": "Latency across different ID mapping scenarios.\n  \n  :Labels: ``operation`` , ``status``, ``utility``\n  :Type: Histogram"
-},
-
-{
-  "type": "heatmap",
-  "title": "idmapping evicted entries cached duration bucket",
-  "gridPos": {
-    "x": 0,
-    "y": 0,
-    "w": 12,
-    "h": 8
-  },
-  "datasource": "ganesha_dashboard",
-  "id": 37,
-  "targets": [
-    {
-      "refId": "A",
-      "expr": "round(sum by(le) (increase(idmapping__evicted_entries_cached_duration_bucket{cache_entity=\"NEGATIVE_USER\"}[$__rate_interval])))",
-      "range": true,
-      "instant": false,
-      "editorMode": "code",
-      "legendFormat": "__auto",
-      "useBackend": false,
-      "disableTextWrap": false,
-      "fullMetaSearch": false,
-      "includeNullMetadata": true
-    }
-  ],
-  "fieldConfig": {
-    "defaults": {
-      "custom": {
-        "scaleDistribution": {
-          "type": "linear"
-        },
-        "hideFrom": {
-          "tooltip": false,
-          "viz": false,
-          "legend": false
-        }
-      }
-    },
-    "overrides": []
-  },
-  "options": {
-    "calculate": false,
-    "yAxis": {
-      "axisPlacement": "left",
-      "reverse": false
-    },
-    "rowsFrame": {
-      "layout": "auto"
-    },
-    "color": {
-      "mode": "scheme",
-      "fill": "dark-orange",
-      "scale": "exponential",
-      "exponent": 0.5,
-      "scheme": "Oranges",
-      "steps": 64,
-      "reverse": false
-    },
-    "cellGap": 1,
-    "filterValues": {
-      "le": 1e-9
-    },
-    "tooltip": {
-      "show": true,
-      "yHistogram": false,
-      "showColorScale": false
-    },
-    "legend": {
-      "show": true
-    },
-    "exemplars": {
-      "color": "rgba(255,0,255,0.7)"
-    }
-  },
-  "pluginVersion": "10.2.6",
-  "description": "  How long ID mapping cache entries remain before being evicted.\n  \n  :Labels: ``cache_entity``\n  :Type: Histogram"
-}
-
-  ]
-  
+  "timepicker": {},
+  "timezone": "",
+  "title": "From_ankush",
+  "uid": "hghghg",
+  "version": 1,
+  "weekStart": ""
 }
